@@ -38,18 +38,19 @@ const DEFAULT_APPS = [
   },
   {
     id: "app-2",
-    title: "Cyberpunk Analytics Dashboard",
-    category: "Web",
-    description: "ផ្ទាំងគ្រប់គ្រងទិន្នន័យ (Dashboard) សម្រាប់ជំនួញ E-Commerce ជាមួយ Real-time Charts, របាយការណ៍លក់, និង Dark UX Theme.",
-    descriptionEn: "Real-time analytics engine for e-commerce metrics, traffic heatmaps, and financial forecasting with cyberpunk dark aesthetic.",
-    url: "https://example.com/cyber-dashboard",
-    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
-    tags: ["Next.js", "Chart.js", "TypeScript", "Node"],
-    githubUrl: "https://github.com/visal/cyber-analytics",
+    title: "VDO to Clip",
+    category: "Tool",
+    description: "Web App សម្រាប់កាត់វីដេអូ (Video Clipper) និងដាក់អក្សរខ្មែរ (Khmer Subtitles) មានភាពងាយស្រួល និងរហ័ស។",
+    descriptionEn: "Video clipper and editor with built-in Khmer subtitle support and AI features.",
+    url: "https://vdo-to-clip.vercel.app/",
+    imageUrl: "https://images.unsplash.com/photo-1578022761797-b8636ac1773c?q=80&w=800&auto=format&fit=crop",
+    logoUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100' height='100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' font-size='60'>🎬</text></svg>",
+    tags: ["Video Editing", "Khmer Subtitles", "HTML Canvas"],
+    githubUrl: "",
     views: 2890,
     likes: 142,
     featured: true,
-    createdAt: "2026-08-22"
+    createdAt: "2026-09-04"
   },
   {
     id: "app-3",
@@ -554,7 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- Data Operations ---
 function loadAppsData() {
-  const saved = localStorage.getItem("nexus_web_apps_v4");
+  const saved = localStorage.getItem("nexus_web_apps_v5");
   if (saved) {
     try {
       appsData = JSON.parse(saved);
@@ -582,7 +583,7 @@ function loadAppsData() {
 }
 
 function saveAppsData() {
-  localStorage.setItem("nexus_web_apps_v4", JSON.stringify(appsData));
+  localStorage.setItem("nexus_web_apps_v5", JSON.stringify(appsData));
 }
 
 // --- Categories Setup ---
