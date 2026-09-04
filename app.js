@@ -301,9 +301,22 @@ function handleLogoError(img, customDomain) {
     if (img.dataset) img.dataset.sourceIdx = currentIndex;
     img.src = sources[currentIndex];
   } else {
-    // Generate SVG Monogram badge
+    // Generate dynamic colorful SVG Monogram badge
     const initial = domain ? domain.charAt(0).toUpperCase() : 'W';
-    img.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><rect width="128" height="128" rx="28" fill="%230d1526"/><rect width="124" height="124" x="2" y="2" rx="26" fill="none" stroke="%2300f2fe" stroke-width="2" opacity="0.6"/><text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" fill="%2300f2fe" font-family="sans-serif" font-weight="bold" font-size="64">${initial}</text></svg>`;
+    
+    const colors = [
+      ['%234f46e5', '%23818cf8'], // Indigo
+      ['%23b91c1c', '%23f87171'], // Red
+      ['%230f766e', '%232dd4bf'], // Teal
+      ['%23b45309', '%23fbbf24'], // Amber
+      ['%237e22ce', '%23c084fc'], // Purple
+      ['%23be185d', '%23f472b6']  // Pink
+    ];
+    let hash = 0;
+    for (let i = 0; i < domain.length; i++) hash += domain.charCodeAt(i);
+    const colorPair = colors[hash % colors.length];
+    
+    img.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><defs><linearGradient id="grad" x1="0%25" y1="0%25" x2="100%25" y2="100%25"><stop offset="0%25" stop-color="${colorPair[0]}" /><stop offset="100%25" stop-color="${colorPair[1]}" /></linearGradient></defs><rect width="128" height="128" rx="28" fill="url(%23grad)"/><text x="50%25" y="58%25" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="sans-serif" font-weight="bold" font-size="64">${initial}</text></svg>`;
     img.onerror = null;
   }
 }
