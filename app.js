@@ -252,12 +252,10 @@ function getLogoSources(url, size = 256, customLogoUrl = null) {
     }
 
     sources.push(
-      `https://icon.horse/icon/${domain}`,
-      `https://logo.clearbit.com/${domain}`,
-      `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=${size}`,
-      `https://unavatar.io/${domain}?fallback=false`,
+      `https://${domain}/apple-touch-icon.png`,
       `https://${domain}/favicon.ico`,
-      `https://${domain}/apple-touch-icon.png`
+      `https://logo.clearbit.com/${domain}`,
+      `https://unavatar.io/${domain}?fallback=false`
     );
 
     return sources;
