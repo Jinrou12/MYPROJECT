@@ -28,7 +28,7 @@ const DEFAULT_APPS = [
     descriptionEn: "Create hundreds of personalized posters in minutes — bulk mail merge with Excel data, Khmer font support, and ZIP export.",
     url: "https://bulk-poster-teal.vercel.app",
     imageUrl: "https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?q=80&w=800&auto=format&fit=crop",
-    logoUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100' height='100'><rect width='100' height='100' rx='20' fill='%230f766e'/><path d='M30 20h40v60H30z' fill='white'/><path d='M38 30h24v4H38zm0 10h24v4H38zm0 10h16v4H38z' fill='%230f766e'/></svg>",
+    logoUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100' height='100'><rect width='100' height='100' rx='20' fill='%23b91c1c'/><g transform='scale(2.5) translate(8, 8)'><polygon points='12 2 2 7 12 12 22 7 12 2' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><polyline points='2 12 12 17 22 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><polyline points='2 17 12 22 22 17' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></g></svg>",
     tags: ["React", "HTML Canvas", "Excel Parser", "ZIP Export"],
     githubUrl: "",
     views: 3420,
@@ -554,7 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- Data Operations ---
 function loadAppsData() {
-  const saved = localStorage.getItem("nexus_web_apps_v3");
+  const saved = localStorage.getItem("nexus_web_apps_v4");
   if (saved) {
     try {
       appsData = JSON.parse(saved);
@@ -582,7 +582,7 @@ function loadAppsData() {
 }
 
 function saveAppsData() {
-  localStorage.setItem("nexus_web_apps_v3", JSON.stringify(appsData));
+  localStorage.setItem("nexus_web_apps_v4", JSON.stringify(appsData));
 }
 
 // --- Categories Setup ---
