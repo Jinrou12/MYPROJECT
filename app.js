@@ -538,6 +538,7 @@ function openEditModal(id) {
   document.getElementById("edit-desc-input").value = app.description;
   document.getElementById("edit-url-input").value = app.url;
   document.getElementById("edit-image-input").value = app.imageUrl || "";
+  document.getElementById("edit-logo-input").value = app.logoUrl || "";
   document.getElementById("edit-tags-input").value = app.tags ? app.tags.join(", ") : "";
   document.getElementById("edit-github-input").value = app.githubUrl || "";
   document.getElementById("edit-featured-input").checked = !!app.featured;
@@ -1055,6 +1056,7 @@ function setupEventListeners() {
       app.description = document.getElementById("edit-desc-input").value.trim();
       app.url = document.getElementById("edit-url-input").value.trim();
       app.imageUrl = document.getElementById("edit-image-input").value.trim() || app.imageUrl;
+      app.logoUrl = document.getElementById("edit-logo-input").value.trim() || app.logoUrl;
       
       const tagsRaw = document.getElementById("edit-tags-input").value.trim();
       app.tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : app.tags;
@@ -1101,6 +1103,7 @@ function setupEventListeners() {
     const description = document.getElementById("app-desc-input").value.trim();
     const url = document.getElementById("app-url-input").value.trim();
     const imageUrl = document.getElementById("app-image-input").value.trim();
+    const logoUrl = document.getElementById("app-logo-input").value.trim();
     const tagsRaw = document.getElementById("app-tags-input").value.trim();
     const githubUrl = document.getElementById("app-github-input").value.trim();
 
@@ -1114,6 +1117,7 @@ function setupEventListeners() {
       descriptionEn: description,
       url,
       imageUrl: imageUrl || getFaviconUrl(url, 128) || "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800",
+      logoUrl: logoUrl,
       tags,
       githubUrl,
       views: 1,
