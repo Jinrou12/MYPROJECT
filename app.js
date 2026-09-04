@@ -21,6 +21,22 @@ const DEFAULT_APPS = [
     createdAt: "2026-09-04"
   },
   {
+    id: "app-khemvoen",
+    title: "ប្រព័ន្ធគ្រប់គ្រងអវត្តមានថ្នាក់បង្កង",
+    category: "Web",
+    description: "ប្រព័ន្ធគ្រប់គ្រងអវត្តមាន និងវត្តមានសិស្សថ្នាក់បង្កង (Khemvoen Attendance Management System) សម្រាប់តាមដានវត្តមានប្រចាំថ្ងៃ ប្រចាំខែ និងស្ថិតិស្វ័យប្រវត្តិ ជាមួយប្រព័ន្ធ Dashboard ពណ៌មាសយ៉ាងប្រណីត។",
+    descriptionEn: "Khemvoen Attendance Management System — Advanced student attendance and absence tracking with daily/monthly automated analytics and luxury golden UI.",
+    url: "https://khemvoen-attendance.vercel.app",
+    imageUrl: "images/khemvoen_banner.png",
+    logoUrl: "images/khemvoen_logo.png",
+    tags: ["Web App", "Attendance", "Khmer UI", "Vercel", "Dashboard"],
+    githubUrl: "",
+    views: 4210,
+    likes: 312,
+    featured: true,
+    createdAt: "2026-09-04"
+  },
+  {
     id: "app-1",
     title: "Bulk Poster Generator",
     category: "Tool",
@@ -243,7 +259,7 @@ function getLogoSources(url, size = 256, customLogoUrl = null) {
 
     const sources = [];
 
-    if (customLogoUrl) {
+    if (customLogoUrl && customLogoUrl.trim() !== '') {
       sources.push(customLogoUrl);
     }
 
@@ -251,11 +267,17 @@ function getLogoSources(url, size = 256, customLogoUrl = null) {
       sources.push('images/jobslak_logo.jpg');
     }
 
+    if (domain.includes('khemvoen')) {
+      sources.push('images/khemvoen_logo.png');
+    }
+
     sources.push(
+      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+      `https://icons.duckduckgo.com/ip3/${domain}.ico`,
       `https://${domain}/apple-touch-icon.png`,
       `https://${domain}/favicon.ico`,
-      `https://logo.clearbit.com/${domain}`,
-      `https://unavatar.io/${domain}?fallback=false`
+      `https://unavatar.io/${domain}?fallback=false`,
+      `https://logo.clearbit.com/${domain}`
     );
 
     return sources;
@@ -532,16 +554,19 @@ function openEditModal(id) {
   const app = appsData.find(a => a.id === id);
   if (!app) return;
 
-  document.getElementById("edit-app-id").value = app.id;
-  document.getElementById("edit-title-input").value = app.title;
-  document.getElementById("edit-cat-input").value = app.category;
-  document.getElementById("edit-desc-input").value = app.description;
-  document.getElementById("edit-url-input").value = app.url;
-  document.getElementById("edit-image-input").value = app.imageUrl || "";
-  document.getElementById("edit-logo-input").value = app.logoUrl || "";
-  document.getElementById("edit-tags-input").value = app.tags ? app.tags.join(", ") : "";
-  document.getElementById("edit-github-input").value = app.githubUrl || "";
-  document.getElementById("edit-featured-input").checked = !!app.featured;
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  const setCheck = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val; };
+
+  setVal("edit-app-id", app.id);
+  setVal("edit-title-input", app.title);
+  setVal("edit-cat-input", app.category);
+  setVal("edit-desc-input", app.description);
+  setVal("edit-url-input", app.url);
+  setVal("edit-image-input", app.imageUrl || "");
+  setVal("edit-logo-input", app.logoUrl || "");
+  setVal("edit-tags-input", app.tags ? app.tags.join(", ") : "");
+  setVal("edit-github-input", app.githubUrl || "");
+  setCheck("edit-featured-input", !!app.featured);
 
   // Trigger live website logo preview
   const editUrlInput = document.getElementById("edit-url-input");
@@ -581,15 +606,30 @@ function loadAppsData() {
 
   // Ensure Jobslak app is configured with image 1 as banner and image 2 as logo
   let jobslakApp = appsData.find(a => a.id === "app-jobslak" || (a.url && a.url.includes("jobslak")));
-  if (!jobslakApp) {
-    appsData.unshift(DEFAULT_APPS[0]);
-  } else {
-    jobslakApp.title = DEFAULT_APPS[0].title;
-    jobslakApp.description = DEFAULT_APPS[0].description;
-    jobslakApp.descriptionEn = DEFAULT_APPS[0].descriptionEn;
-    jobslakApp.tags = DEFAULT_APPS[0].tags;
+  const defaultJobslak = DEFAULT_APPS.find(a => a.id === "app-jobslak");
+  
+  if (!jobslakApp && defaultJobslak) {
+    appsData.unshift(defaultJobslak);
+  } else if (jobslakApp && defaultJobslak) {
+    jobslakApp.title = defaultJobslak.title;
+    jobslakApp.description = defaultJobslak.description;
+    jobslakApp.descriptionEn = defaultJobslak.descriptionEn;
+    jobslakApp.tags = defaultJobslak.tags;
     jobslakApp.imageUrl = "images/jobslak_banner.png";
     jobslakApp.logoUrl = "images/jobslak_logo.jpg";
+  }
+
+  // Ensure Khemvoen Attendance app is configured with logo & banner assets
+  let khemvoenApp = appsData.find(a => a.id === "app-khemvoen" || (a.url && a.url.includes("khemvoen")));
+  const defaultKhemvoen = DEFAULT_APPS.find(a => a.id === "app-khemvoen");
+  if (!khemvoenApp && defaultKhemvoen) {
+    appsData.splice(1, 0, defaultKhemvoen);
+  } else if (khemvoenApp && defaultKhemvoen) {
+    khemvoenApp.title = defaultKhemvoen.title;
+    if (!khemvoenApp.imageUrl || khemvoenApp.imageUrl.includes("unsplash")) {
+      khemvoenApp.imageUrl = "images/khemvoen_banner.png";
+    }
+    khemvoenApp.logoUrl = "images/khemvoen_logo.png";
   }
 
   saveAppsData();
@@ -640,7 +680,10 @@ function renderApps() {
     if (sortBy === "views") return b.views - a.views;
     if (sortBy === "likes") return b.likes - a.likes;
     // Featured default
-    return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+    const featuredDiff = (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+    if (featuredDiff !== 0) return featuredDiff;
+    // Secondary sort: recent
+    return new Date(b.createdAt) - new Date(a.createdAt);
   });
 
   if (filtered.length === 0) {
@@ -669,7 +712,7 @@ function renderApps() {
 
     return `
       <article class="app-card" data-id="${app.id}">
-        <div class="app-thumbnail">
+        <div class="app-thumbnail" data-id="${app.id}" style="cursor: pointer;" title="Click to open ${app.title}">
           <img src="${cardImage}" alt="${app.title}" loading="lazy" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
           <div class="thumbnail-overlay">
             <span class="badge-cat">${app.category}</span>
@@ -721,10 +764,22 @@ function renderApps() {
   if (window.lucide) lucide.createIcons();
 
   // Attach card event handlers
-  document.querySelectorAll(".open-preview-btn").forEach(btn => {
+  document.querySelectorAll(".open-preview-btn, .app-thumbnail").forEach(btn => {
     btn.addEventListener("click", (e) => {
       const id = btn.dataset.id;
-      openPreviewModal(id);
+      const app = appsData.find(a => a.id === id);
+      if (app && app.url) {
+        // Increment view count since they are visiting the app
+        app.views += 1;
+        saveAppsData();
+        updateStats();
+        
+        // Open web app directly in a new tab
+        window.open(app.url, '_blank');
+        
+        // Refresh UI slightly later to show updated views
+        setTimeout(renderApps, 500);
+      }
     });
   });
 
@@ -840,6 +895,7 @@ function setupUrlLogoListeners() {
     {
       inputId: "app-url-input",
       catId: "app-cat-input",
+      logoInputId: "app-logo-input",
       previewId: "app-url-logo-preview",
       imgId: "app-url-logo-img",
       textId: "app-url-domain-text",
@@ -850,6 +906,7 @@ function setupUrlLogoListeners() {
     {
       inputId: "edit-url-input",
       catId: "edit-cat-input",
+      logoInputId: "edit-logo-input",
       previewId: "edit-url-logo-preview",
       imgId: "edit-url-logo-img",
       textId: "edit-url-domain-text",
@@ -859,9 +916,10 @@ function setupUrlLogoListeners() {
     }
   ];
 
-  urlInputs.forEach(({ inputId, catId, previewId, imgId, textId, targetImageInputId, btnLogoId, btnScreenshotId }) => {
+  urlInputs.forEach(({ inputId, catId, logoInputId, previewId, imgId, textId, targetImageInputId, btnLogoId, btnScreenshotId }) => {
     const input = document.getElementById(inputId);
     const catInput = document.getElementById(catId);
+    const logoInput = document.getElementById(logoInputId);
     const preview = document.getElementById(previewId);
     const img = document.getElementById(imgId);
     const text = document.getElementById(textId);
@@ -893,12 +951,21 @@ function setupUrlLogoListeners() {
         return;
       }
 
-      const logoUrl = `https://icon.horse/icon/${domain}`;
+      const customLogoVal = logoInput ? logoInput.value.trim() : null;
+      const sources = getLogoSources(val, 128, customLogoVal);
       const cleanUrl = val.startsWith('http') ? val : 'https://' + val;
       const screenshotUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=1200&h=800`;
-      const selectedUrl = activeMode === "logo" ? logoUrl : screenshotUrl;
+      const selectedUrl = activeMode === "logo" ? (sources.length > 0 ? sources[0] : `https://www.google.com/s2/favicons?domain=${domain}&sz=128`) : screenshotUrl;
 
       img.dataset.domain = domain;
+      if (activeMode === "logo") {
+        img.dataset.logoSources = JSON.stringify(sources);
+        img.dataset.sourceIdx = "0";
+      } else {
+        img.dataset.logoSources = "[]";
+        img.dataset.sourceIdx = "0";
+      }
+
       img.src = selectedUrl;
       img.style.display = "block";
       text.textContent = activeMode === "logo" 
@@ -941,6 +1008,12 @@ function setupUrlLogoListeners() {
       });
     }
 
+    if (logoInput) {
+      logoInput.addEventListener("input", () => {
+        if (activeMode === "logo") applySelectedImage();
+      });
+    }
+
     if (btnLogo) {
       btnLogo.addEventListener("click", () => {
         activeMode = "logo";
@@ -961,6 +1034,34 @@ function setupUrlLogoListeners() {
 
 // --- Event Listeners Setup ---
 function setupEventListeners() {
+  // Admin Login Logic
+  const adminLoginOverlay = document.getElementById("admin-login-overlay");
+  const adminLoginForm = document.getElementById("admin-login-form");
+  const adminPasscodeInput = document.getElementById("admin-passcode");
+  const loginErrorMsg = document.getElementById("login-error-msg");
+
+  if (adminLoginOverlay) {
+    const isLogged = sessionStorage.getItem("nexus_admin_logged_in") === "true";
+    if (isLogged) {
+      adminLoginOverlay.classList.add("hidden");
+    }
+
+    if (adminLoginForm) {
+      adminLoginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const code = adminPasscodeInput.value;
+        if (code === "admin123") {
+          sessionStorage.setItem("nexus_admin_logged_in", "true");
+          adminLoginOverlay.classList.add("hidden");
+          loginErrorMsg.style.display = "none";
+        } else {
+          loginErrorMsg.style.display = "block";
+          adminPasscodeInput.value = "";
+        }
+      });
+    }
+  }
+
   // Search Input
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {

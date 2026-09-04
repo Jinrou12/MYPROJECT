@@ -11,6 +11,25 @@
 </head>
 <body>
 
+  <!-- Admin Login Overlay -->
+  <div id="admin-login-overlay">
+    <div class="login-box">
+      <div class="logo-icon" style="margin: 0 auto 1rem; width: 60px; height: 60px;">
+        <i data-lucide="shield-alert" style="width: 32px; height: 32px; color: var(--primary-cyan);"></i>
+      </div>
+      <h2 style="color: var(--primary-cyan); margin-bottom: 0.5rem;">Manager Auth</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Please enter admin passcode</p>
+      
+      <form id="admin-login-form">
+        <input type="password" id="admin-passcode" class="form-control" placeholder="••••••••" required>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          <i data-lucide="unlock"></i> Unlock Dashboard
+        </button>
+      </form>
+      <div id="login-error-msg" style="color: var(--accent-pink); margin-top: 1rem; display: none; font-size: 0.85rem;">Incorrect passcode!</div>
+    </div>
+  </div>
+
   <!-- Ambient Glow Background Orbs -->
   <div class="bg-glow-orb orb-1"></div>
   <div class="bg-glow-orb orb-2"></div>

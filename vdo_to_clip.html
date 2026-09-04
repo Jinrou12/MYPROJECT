@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khmer Video Clipper Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&family=Kantumruy+Pro:ital,wght@0,400..700;1,400..700&family=Moul&family=Preahvihear&family=Siemreap&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=16.0">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-icon">&#127916;</div>
+                <div class="brand-text">
+                    <h1>Khmer Video Clipper Pro</h1>
+                    <span class="sub-title">ß×Çß×Âß×Åßƒïß×£ß×©ß×èßƒüß×óß×╝ & ß×èß×Âß×Çßƒïß×óß×ÇßƒÆß×ƒß×Üß×üßƒÆß×ÿßƒéß×Ü</span>
+                </div>
+            </div>
+
+            <div class="step-nav">
+                <button id="step1TabBtn" class="step-btn active">
+                    <span class="step-num">ßƒí</span>
+                    <span>Ô£é´©Å ß×Çß×Âß×Åßƒï Clip</span>
+                </button>
+                <div class="step-arrow">ÔåÆ</div>
+                <button id="step2TabBtn" class="step-btn">
+                    <span class="step-num">ßƒó</span>
+                    <span>­ƒÄ¿ ß×Çßƒéß×óß×ÇßƒÆß×ƒß×Ü</span>
+                    <span id="step2Badge" class="badge-count">0</span>
+                </button>
+            </div>
+
+            <div class="header-actions">
+                <button id="openAiModalBtn" class="btn btn-ai-sparkle">
+                    <span class="ai-sparkle-icon">Ô£¿</span>
+                    <span>AI ß×Äßƒéß×ôß×Âßƒå Clip</span>
+                    <span class="ai-badge-live">Khmer AI</span>
+                </button>
+                <a href="poster_demo.html" target="_blank" class="btn btn-secondary" style="text-decoration:none; padding:8px 14px;">­ƒÄ¿ Poster Studio Demo</a>
+                <label for="videoUploadInput" class="btn btn-primary btn-upload">
+                    <span>­ƒôü ß×çßƒÆß×Üß×¥ß×ƒß×Üß×¥ß×ƒß×£ß×©ß×èßƒüß×óß×╝</span>
+                    <input type="file" id="videoUploadInput" accept="video/*" hidden>
+                </label>
+            </div>
+        </header>
+
+        <div id="dropzoneOverlay" class="dropzone-overlay">
+            <div class="dropzone-card">
+                <div class="upload-icon">&#127909;</div>
+                <h2>ß×æß×ÿßƒÆß×øß×Âß×Çßƒïß×£ß×©ß×èßƒüß×óß×╝ß×ôßƒàß×æß×©ß×ôßƒüßƒç</h2>
+                <p>ß×¼ß×àß×╗ß×àß×èß×¥ß×ÿßƒÆß×öß×©ß×çßƒÆß×Üß×¥ß×ƒß×Üß×¥ß×ƒß×£ß×©ß×èßƒüß×óß×╝</p>
+                <button class="btn btn-primary btn-lg" onclick="document.getElementById('videoUploadInput').click()">
+                    ­ƒôü ß×çßƒÆß×Üß×¥ß×ƒß×Üß×¥ß×ƒß×£ß×©ß×èßƒüß×óß×╝
+                </button>
+            </div>
+        </div>
+
+        <main id="screen1View" class="workspace screen-layout-1">
+            <aside class="sidebar left-sidebar">
+                <div class="panel-section">
+                    <h3 class="panel-title">­ƒôü ß×»ß×Çß×ƒß×Âß×Ü</h3>
+                    <div id="fileInfoBox" class="file-info-box empty">
+                        <p class="placeholder-text">ß×ƒß×╝ß×ÿß×çßƒÆß×Üß×¥ß×ƒß×Üß×¥ß×ƒß×£ß×©ß×èßƒüß×óß×╝...</p>
+                    </div>
+                </div>
+
+                <div class="panel-section ai-quick-section">
+                    <div class="ai-widget-card">
+                        <div class="ai-widget-header">
+                            <span class="ai-widget-icon">­ƒñû</span>
+                            <div class="ai-widget-text">
+                                <h4>AI ß×ƒßƒÆß×Çßƒéß×ô &amp; ß×Äßƒéß×ôß×Âßƒå Clip</h4>
+                                <p>ß×ƒßƒÆß×èß×Âß×ößƒïß×ƒßƒåß×íßƒüß×äß×üßƒÆß×ÿßƒéß×Ü &amp; ß×Üß×Ç Clip ß×øßƒÆß×óßƒù</p>
+                            </div>
+                        </div>
+                        <button id="aiQuickScanBtn" class="btn btn-ai-pulse btn-block btn-sm" disabled>
+                            Ô£¿ ß×£ß×Àß×ùß×Âß×é AI ß×ƒßƒÆß×£ßƒÉß×Öß×ößƒÆß×Üß×£ß×ÅßƒÆß×Åß×À
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-section clips-section flex-grow">
+                    <div class="section-header">
+                        <h3 class="panel-title">­ƒÄ¼ ß×ÜßƒÇß×öß×øßƒåß×èß×Âß×ößƒï Clips (<span id="clipCount">0</span>)</h3>
+                    </div>
+                    <div id="clipsListScreen1" class="clips-list">
+                        <div class="empty-clips-notice">
+                            <span class="icon">&#127916;</span>
+                            <p>ß×ÿß×Àß×ôß×æß×Âß×ôßƒïß×ÿß×Âß×ô Clip</p>
+                            <small>ß×Çßƒåß×Äß×Åßƒï <strong>Set In</strong> &amp; <strong>Set Out</strong> ß×Üß×¢ß×àß×àß×╗ß×à <strong>+ ß×öß×ôßƒÆß×Éßƒéß×ÿ</strong></small>
+                        </div>
+                    </div>
+                    <div class="panel-footer-box">
+                        <button id="goToStep2Btn" class="btn btn-primary btn-lg btn-block" disabled>
+                            Ô×í´©Å ß×æßƒàß×Çßƒéß×óß×ÇßƒÆß×ƒß×Ü
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="stage-container trimmer-stage">
+                <div class="video-player-container">
+                    <video id="mainVideoPlayer" controls playsinline></video>
+                </div>
+
+                <div class="timeline-panel">
+                    <div class="clip-name-bar">
+                        <div class="clip-name-input-group">
+                            <label for="clipTitleInput">­ƒÅÀ´©Å ß×àßƒåß×Äß×äß×çß×¥ß×ä Clip:</label>
+                            <input type="text" id="clipTitleInput" class="form-control clip-title-input" placeholder="ß×º. Clip 1 - ß×ùß×Âß×éßƒí...">
+                        </div>
+                        <div class="clip-action-btns">
+                            <button id="addClipBtn" class="btn btn-success btn-lg btn-add-clip" disabled title="Shortcut: ß×éßƒÆß×Üß×Âß×ößƒïß×àß×╗ß×à A">
+                                Ô×ò ß×öß×ôßƒÆß×Éßƒéß×ÿ Clip [A]
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="trim-actions-bar">
+                        <div class="trim-inputs">
+                            <div class="trim-btn-group">
+                                <span id="inTimeDisplay" class="badge badge-in">00:00:00.00</span>
+                                <button id="setInBtn" class="btn btn-lg btn-in" disabled title="Shortcut: ß×éßƒÆß×Üß×Âß×ößƒïß×àß×╗ß×à S">
+                                    ­ƒÜ® Set In [S]
+                                </button>
+                            </div>
+                            <div class="trim-btn-group">
+                                <span id="outTimeDisplay" class="badge badge-out">00:00:00.00</span>
+                                <button id="setOutBtn" class="btn btn-lg btn-out" disabled title="Shortcut: ß×éßƒÆß×Üß×Âß×ößƒïß×àß×╗ß×à E">
+                                    ­ƒÅü Set Out [E]
+                                </button>
+                            </div>
+                            <div class="trim-btn-group">
+                                <button id="undoTrimBtn" class="btn btn-lg btn-secondary" onclick="window.undoLastAction && window.undoLastAction()" title="Shortcut: Ctrl + Z (ß×ÅßƒÆß×Üß×íß×ößƒïß×Éß×Öß×ÇßƒÆß×Üßƒäß×Ö)">
+                                    Ôå®´©Å Undo [Ctrl+Z]
+                                </button>
+                            </div>
+                            <div class="duration-badge-group">
+                                <label>ß×Üß×Ößƒêß×ûßƒüß×ø:</label>
+                                <span id="clipDurationDisplay" class="badge badge-duration">00:00.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scrubber-container expanded-scrubber">
+                        <div id="timelineTrack" class="timeline-track">
+                            <div id="trimSelectionRange" class="trim-selection-range"></div>
+                            <div id="playhead" class="playhead"></div>
+                        </div>
+                        <input type="range" id="timelineSlider" min="0" max="100" value="0" step="0.01" disabled>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <main id="screen2View" class="workspace screen-layout-2 hidden">
+            <aside class="sidebar left-sidebar">
+                <div class="panel-section">
+                    <h3 class="panel-title">­ƒÄ¼ ß×ÜßƒÇß×öß×øßƒåß×èß×Âß×ößƒï Clips</h3>
+                    <p class="help-text">ß×àß×╗ß×à Ôû▓ Ôû╝ ß×èß×¥ß×ÿßƒÆß×öß×©ß×Åßƒåß×ÜßƒÇß×öß×øßƒåß×èß×Âß×ößƒï</p>
+                </div>
+                <div class="panel-section clips-section flex-grow">
+                    <div id="clipsListScreen2" class="clips-list"></div>
+                </div>
+                <div class="panel-footer-box">
+                    <button id="backToStep1Btn" class="btn btn-secondary btn-md btn-block">
+                        Ô¼à´©Å ß×ÅßƒÆß×Üß×íß×ößƒïß×æßƒàß×Çß×Âß×Åßƒï Clips
+                    </button>
+                </div>
+            </aside>
+
+            <section class="stage-container studio-stage">
+                <div class="studio-top-bar">
+                    <div class="aspect-ratio-selector">
+                        <label>ß×æß×ÿßƒÆß×Üß×äßƒï:</label>
+                        <div class="segmented-control">
+                            <button class="aspect-btn active" data-ratio="9:16">­ƒô▒ 9:16</button>
+                            <button class="aspect-btn" data-ratio="1:1">­ƒö▓ 1:1</button>
+                            <button class="aspect-btn" data-ratio="16:9">­ƒûÑ´©Å 16:9</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="canvas-viewport">
+                    <div id="canvasWrapper" class="canvas-wrapper aspect-9-16">
+                        <canvas id="mainCanvas" width="1080" height="1920"></canvas>
+                        <input type="text" id="canvasInlineInput" class="canvas-inline-input hidden" placeholder="ß×£ß×Âß×Öß×óß×ÇßƒÆß×ƒß×Ü...">
+                        <div id="canvasLoadingSpinner" class="canvas-loader hidden">
+                            <div class="spinner"></div>
+                            <span>ß×Çßƒåß×ûß×╗ß×ä Export...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="studio-bottom-panel">
+                    <div class="studio-scrubber-bar">
+                        <span id="studioClipTimeDisplay" class="badge">00:00.00 / 00:00.00</span>
+                        <input type="range" id="studioClipScrubber" min="0" max="100" value="0" step="0.05" class="studio-slider" title="ß×óß×╝ß×ƒß×èß×¥ß×ÿßƒÆß×öß×©ß×ÿß×¥ß×ø / Playback Clip ß×àß×╗ßƒçß×íß×¥ß×ä">
+                    </div>
+                    <div class="studio-controls-row">
+                        <div class="clip-play-info">
+                            <div class="playback-controls-group">
+                                <button id="seekBackBtn" class="btn btn-icon btn-secondary btn-sm">ÔÅ¬ -5s</button>
+                                <button id="canvasPlayPauseBtn" class="btn btn-icon btn-play-pause">ÔûÂ Play</button>
+                                <button id="seekForwardBtn" class="btn btn-icon btn-secondary btn-sm">ÔÅ® +5s</button>
+                            </div>
+                        </div>
+                        <div class="studio-export-btns">
+                            <button id="exportActiveClipBtn" class="btn btn-primary btn-md">ÔÜí Export Clip ß×ôßƒüßƒç</button>
+                            <button id="exportAllClipsStudioBtn" class="btn btn-success btn-md">­ƒôª Export ß×æß×Âßƒåß×äß×óß×ƒßƒï</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="sidebar right-sidebar">
+                <div class="sidebar-global-actions" style="padding: 10px 12px 4px 12px;">
+                    <button id="applyToAllClipsBtn" class="btn btn-primary btn-block btn-apply-all" onclick="applyStyleToAllClips()">
+                        ­ƒôï ß×óß×ôß×╗ß×£ß×ÅßƒÆß×Åß×ÿßƒëß×╝ß×èß×æßƒà Clips ß×æß×Âßƒåß×äß×óß×ƒßƒï
+                    </button>
+                </div>
+
+                <div class="sidebar-tabs">
+                    <button class="tab-btn active" data-tab="textTab">Ô£ì´©Å ß×óß×ÇßƒÆß×ƒß×Ü</button>
+                    <button class="tab-btn" data-tab="colorFontTab">­ƒÄ¿ ß×ûß×Äßƒî & Font</button>
+                    <button class="tab-btn" data-tab="layoutTab">­ƒû╝´©Å Layout</button>
+                </div>
+
+                <div class="tab-contents">
+
+                    <div id="textTab" class="tab-content active">
+                        <div class="control-card">
+                            <div class="card-header-flex">
+                                <h4 class="card-title">­ƒÅÀ´©Å ß×àßƒåß×Äß×äß×çß×¥ß×ä Clip (Clip Title)</h4>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <input type="text" id="activeClipTitleInput" class="form-control" placeholder="ß×£ß×Âß×Öß×àßƒåß×Äß×äß×çß×¥ß×ä Clip ß×æß×©ß×ôßƒüßƒç...">
+                            </div>
+                        </div>
+
+                        <div class="control-card">
+                            <div class="card-header-flex">
+                                <h4 class="card-title">­ƒôî ß×óß×ÇßƒÆß×ƒß×Üß×üß×Âß×äß×øß×¥</h4>
+                                <button class="btn btn-outline btn-xs" onclick="clearTopText()">­ƒùæ´©Å ß×øß×╗ß×ö</button>
+                            </div>
+                            <div id="topTextSingleGroup" class="form-group hidden">
+                                <input type="text" id="topTextInput" class="form-control" value="ß×óß×ÇßƒÆß×ƒß×Üß×üß×Âß×äß×øß×¥" placeholder="ß×óß×ÇßƒÆß×ƒß×Üß×üß×Âß×äß×øß×¥...">
+                            </div>
+                            <div id="topTextDualGroup" class="dual-text-stack">
+                                <div class="form-group">
+                                    <label id="topPart1Label" style="color:#FFE600;">&#9654; ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒí (ß×øß×┐ß×ä):</label>
+                                    <input type="text" id="topTextPart1Input" class="form-control" value="ß×èß×¥ß×ÿ" placeholder="ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒí...">
+                                </div>
+                                <div class="form-group">
+                                    <label id="topPart2Label" style="color:#FF5722;">&#9654; ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒó (ß×ÇßƒÆß×Üß×áß×ÿ):</label>
+                                    <input type="text" id="topTextPart2Input" class="form-control" value="ß×ÅßƒÆß×ôßƒäß×Å" placeholder="ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒó...">
+                                </div>
+                            </div>
+                            <div id="topWordChips" class="word-chips-container"></div>
+                        </div>
+
+                        <div class="control-card">
+                            <div class="card-header-flex">
+                                <h4 class="card-title">­ƒôî ß×óß×ÇßƒÆß×ƒß×Üß×üß×Âß×äß×ÇßƒÆß×Üßƒäß×ÿ</h4>
+                                <button class="btn btn-outline btn-xs" onclick="clearBottomText()">­ƒùæ´©Å ß×øß×╗ß×ö</button>
+                            </div>
+                            <div id="bottomTextSingleGroup" class="form-group hidden">
+                                <input type="text" id="bottomTextInput" class="form-control" value="ß×óß×ÇßƒÆß×ƒß×Üß×üß×Âß×äß×ÇßƒÆß×Üßƒäß×ÿ" placeholder="ß×óß×ÇßƒÆß×ƒß×Üß×üß×Âß×äß×ÇßƒÆß×Üßƒäß×ÿ...">
+                            </div>
+                            <div id="bottomTextDualGroup" class="dual-text-stack">
+                                <div class="form-group">
+                                    <label id="bottomPart1Label" style="color:#FFE600;">&#9654; ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒí (ß×øß×┐ß×ä):</label>
+                                    <input type="text" id="bottomTextPart1Input" class="form-control" value="ß×óß×ÇßƒÆß×ƒß×Ü" placeholder="ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒí...">
+                                </div>
+                                <div class="form-group">
+                                    <label id="bottomPart2Label" style="color:#FF5722;">&#9654; ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒó (ß×ÇßƒÆß×Üß×áß×ÿ):</label>
+                                    <input type="text" id="bottomTextPart2Input" class="form-control" value="ß×ÇßƒÆß×Üßƒäß×ÿ" placeholder="ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒó...">
+                                </div>
+                            </div>
+                            <div id="bottomWordChips" class="word-chips-container"></div>
+                        </div>
+                    </div>
+
+                    <div id="colorFontTab" class="tab-content">
+                        <div class="control-card">
+                            <h4 class="card-title">­ƒÄ¿ ß×Üß×ößƒÇß×öß×ûß×Äßƒîß×óß×ÇßƒÆß×ƒß×Ü (Color Mode)</h4>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <select id="colorModeSelect" class="form-control">
+                                    <option value="dual" selected>­ƒÄ¿ ß×ûß×Äßƒîßƒóß×üßƒÆß×æß×äßƒï (Dual 2-Color)</option>
+                                    <option value="single">­ƒûî´©Å ß×ûß×Äßƒîß×Åßƒéß×ÿß×¢ß×Ö (Single Color)</option>
+                                    <option value="gradient">­ƒîê Gradient</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-card">
+                            <h4 class="card-title">­ƒôî ß×ûß×Äßƒîß×óß×ÇßƒÆß×ƒß×Üß×üß×Âß×äß×øß×¥ (Top Text Colors)</h4>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label>ß×ûß×Äßƒîß×æß×©ßƒí (ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒí):</label>
+                                    <div class="color-picker-swatch-box" data-target="topTextColor1" id="topTextColor1Box">
+                                        <span class="swatch-circle" id="topTextColor1Swatch" style="background:#FFE600;"></span>
+                                        <span id="topTextColor1Val" class="color-val">#FFE600</span>
+                                    </div>
+                                </div>
+                                <div id="topColor2Group" class="form-group col">
+                                    <label>ß×ûß×Äßƒîß×æß×©ßƒó (ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒó):</label>
+                                    <div class="color-picker-swatch-box" data-target="topTextColor2" id="topTextColor2Box">
+                                        <span class="swatch-circle" id="topTextColor2Swatch" style="background:#FF5722;"></span>
+                                        <span id="topTextColor2Val" class="color-val">#FF5722</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-card">
+                            <h4 class="card-title">­ƒôî ß×ûß×Äßƒîß×óß×ÇßƒÆß×ƒß×Üß×üß×Âß×äß×ÇßƒÆß×Üßƒäß×ÿ (Bottom Text Colors)</h4>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label>ß×ûß×Äßƒîß×æß×©ßƒí (ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒí):</label>
+                                    <div class="color-picker-swatch-box" data-target="bottomTextColor1" id="bottomTextColor1Box">
+                                        <span class="swatch-circle" id="bottomTextColor1Swatch" style="background:#FFE600;"></span>
+                                        <span id="bottomTextColor1Val" class="color-val">#FFE600</span>
+                                    </div>
+                                </div>
+                                <div id="bottomColor2Group" class="form-group col">
+                                    <label>ß×ûß×Äßƒîß×æß×©ßƒó (ß×ûß×Âß×ÇßƒÆß×Öß×æß×©ßƒó):</label>
+                                    <div class="color-picker-swatch-box" data-target="bottomTextColor2" id="bottomTextColor2Box">
+                                        <span class="swatch-circle" id="bottomTextColor2Swatch" style="background:#FF5722;"></span>
+                                        <span id="bottomTextColor2Val" class="color-val">#FF5722</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-card">
+                            <h4 class="card-title">­ƒÄ¿ ß×ÿßƒëß×╝ß×èß×ƒßƒèß×╗ß×ÿ & Font</h4>
+                            <div class="form-group">
+                                <label>Font ß×üßƒÆß×ÿßƒéß×Ü:</label>
+                                <select id="fontFamilySelect" class="form-control">
+                                    <option value="Moul" selected>Moul (ß×ÿßƒëß×╝ß×ø)</option>
+                                    <option value="Kantumruy Pro">Kantumruy Pro</option>
+                                    <option value="Battambang">Battambang</option>
+                                    <option value="Preahvihear">Preahvihear</option>
+                                    <option value="Siemreap">Siemreap</option>
+                                    <option value="sans-serif">System Default</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label>ß×ûß×Äßƒîß×ƒßƒèß×╗ß×ÿ:</label>
+                                    <div class="color-picker-swatch-box" data-target="strokeColor" id="strokeColorBox">
+                                        <span class="swatch-circle" id="strokeColorSwatch" style="background:#FFFFFF;"></span>
+                                        <span id="strokeColorVal" class="color-val">#FFFFFF</span>
+                                    </div>
+                                </div>
+                                <div class="form-group col">
+                                    <label>ß×Çß×ÿßƒÆß×Üß×Âß×ƒßƒïß×ƒßƒèß×╗ß×ÿ:</label>
+                                    <input type="range" id="strokeWidthInput" min="0" max="30" value="12">
+                                    <span id="strokeWidthVal" class="val-badge">12px</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Glow Shadow:</label>
+                                <input type="range" id="shadowBlurInput" min="0" max="30" value="10">
+                                <span id="shadowBlurVal" class="val-badge">10px</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="layoutTab" class="tab-content">
+                        <div class="control-card">
+                            <h4 class="card-title">­ƒû╝´©Å ß×òßƒÆß×æßƒâß×üß×Âß×äß×ÇßƒÆß×Üßƒäß×Ö</h4>
+                            <div class="form-group">
+                                <label>ß×Üß×ößƒÇß×öß×òßƒÆß×æßƒâ:</label>
+                                <select id="bgModeSelect" class="form-control">
+                                    <option value="blur" selected>Ô£¿ Blur Video</option>
+                                    <option value="color">­ƒÄ¿ ß×ûß×Äßƒîß×òßƒÆß×æßƒâ</option>
+                                    <option value="gradient">­ƒîê Gradient</option>
+                                </select>
+                            </div>
+                            <div id="blurConfig" class="form-group">
+                                <label>ß×Çß×ÿßƒÆß×Üß×Àß×Å Blur:</label>
+                                <input type="range" id="blurRadiusInput" min="5" max="50" value="25">
+                                <span id="blurRadiusVal" class="val-badge">25px</span>
+                            </div>
+                            <div id="bgColorConfig" class="form-group hidden">
+                                <label>ß×çßƒÆß×Üß×¥ß×ƒß×ûß×Äßƒîß×òßƒÆß×æßƒâ:</label>
+                                <div class="color-picker-swatch-box" data-target="bgColor" id="bgColorBox">
+                                    <span class="swatch-circle" id="bgColorSwatch" style="background:#111827;"></span>
+                                    <span id="bgColorVal" class="color-val">#111827</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-card">
+                            <h4 class="card-title">­ƒôÉ ß×æßƒåß×áßƒå & ß×æß×©ß×Åß×Âßƒåß×äß×£ß×©ß×èßƒüß×óß×╝</h4>
+                            <div class="form-group">
+                                <label>ß×æßƒåß×áßƒå (Scale %):</label>
+                                <input type="range" id="videoScaleInput" min="50" max="150" value="100">
+                                <span id="videoScaleVal" class="val-badge">100%</span>
+                            </div>
+                            <div class="form-group">
+                                <label>ß×æß×©ß×Åß×Âßƒåß×ä Y Offset:</label>
+                                <input type="range" id="videoOffsetYInput" min="-300" max="300" value="0">
+                                <span id="videoOffsetYVal" class="val-badge">0px</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <video id="hiddenVideo" playsinline style="display:none;"></video>
+
+    <div id="exportModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>ÔÜí ß×Çßƒåß×ûß×╗ß×ä Export...</h3>
+            </div>
+            <div class="modal-body">
+                <div class="progress-bar-container">
+                    <div id="exportProgressBar" class="progress-bar-fill" style="width: 0%;"></div>
+                </div>
+                <div class="progress-stats">
+                    <span id="exportStatusText">ß×ÜßƒÇß×öß×àßƒå...</span>
+                    <span id="exportPercentText">0%</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelExportBtn" class="btn btn-danger btn-sm">ÔØî ß×ößƒäßƒçß×öß×äßƒï</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom In-DOM Color Picker Popover (Guaranteed Anchored Layout - Never jumps to top-left (0,0)) -->
+    <div id="customColorPopover" class="custom-color-popover hidden">
+        <div class="popover-header">
+            <span id="popoverTitle" class="popover-title">­ƒÄ¿ ß×çßƒÆß×Üß×¥ß×ƒß×Üß×¥ß×ƒß×ûß×Äßƒî</span>
+            <button id="closePopoverBtn" class="popover-close-btn">&times;</button>
+        </div>
+        <div class="popover-body">
+            <div class="preset-label">ß×ûß×Äßƒîß×ößƒÆß×ÜßƒÇß×öß×ÜßƒÇß×ö (Quick Palette):</div>
+            <div class="preset-grid">
+                <button class="preset-chip" data-color="#FFE600" style="background:#FFE600;" title="ß×øß×┐ß×ä (Gold)"></button>
+                <button class="preset-chip" data-color="#FF5722" style="background:#FF5722;" title="ß×ÇßƒÆß×Üß×áß×ÿ (Red)"></button>
+                <button class="preset-chip" data-color="#10B981" style="background:#10B981;" title="ß×ößƒâß×Åß×ä (Green)"></button>
+                <button class="preset-chip" data-color="#06B6D4" style="background:#06B6D4;" title="ß×üßƒÇß×£ß×ƒßƒÆß×Üß×Âß×ø (Cyan)"></button>
+                <button class="preset-chip" data-color="#3B82F6" style="background:#3B82F6;" title="ß×üßƒÇß×£ (Blue)"></button>
+                <button class="preset-chip" data-color="#A855F7" style="background:#A855F7;" title="ß×ƒßƒÆß×£ß×Âß×Ö (Purple)"></button>
+                <button class="preset-chip" data-color="#EC4899" style="background:#EC4899;" title="ß×òßƒÆß×Çß×Âß×êß×╝ß×Ç (Pink)"></button>
+                <button class="preset-chip" data-color="#FFFFFF" style="background:#FFFFFF;" title="ß×ƒ (White)"></button>
+                <button class="preset-chip" data-color="#000000" style="background:#000000;" title="ß×üßƒÆß×ÿßƒà (Black)"></button>
+                <button class="preset-chip" data-color="#111827" style="background:#111827;" title="ß×òßƒÆß×æßƒâß×äß×äß×╣ß×Å (Dark)"></button>
+                <button class="preset-chip" data-color="#F97316" style="background:#F97316;" title="ß×æß×╣ß×Çß×ÇßƒÆß×Üß×╝ß×à (Orange)"></button>
+                <button class="preset-chip" data-color="#EAB308" style="background:#EAB308;" title="ß×øß×┐ß×äß×àß×Âß×ƒßƒï (Amber)"></button>
+            </div>
+            <div class="popover-input-row">
+                <span id="popoverPreviewSwatch" class="popover-preview-swatch"></span>
+                <input type="text" id="popoverHexInput" class="form-control popover-hex-input" maxlength="7" placeholder="#HEX">
+                <label for="popoverNativeColorInput" class="popover-native-btn" title="Custom Wheel">
+                    ­ƒÄ¿ Color Wheel
+                    <input type="color" id="popoverNativeColorInput" class="popover-native-picker">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastNotification" class="toast-notification hidden"></div>
+
+    <!-- AI Smart Assistant Modal (Khmer AI Clip Recommender & Voice Listener) -->
+    <div id="aiAssistantModal" class="modal-overlay hidden">
+        <div class="modal-card ai-modal-card">
+            <div class="modal-header ai-modal-header">
+                <div class="ai-title-group">
+                    <span class="ai-header-icon">Ô£¿</span>
+                    <div>
+                        <h3>Khmer AI Smart Clipper</h3>
+                        <span class="ai-header-sub">ß×ößƒÆß×Üß×ûßƒÉß×ôßƒÆß×Æ AI ß×ƒßƒÆß×èß×Âß×ößƒïß×ƒßƒåß×íßƒüß×äß×üßƒÆß×ÿßƒéß×Ü &amp; ß×Äßƒéß×ôß×Âßƒå Clip ß×øßƒÆß×óßƒùß×ûß×© Video ß×ûßƒüß×ë</span>
+                    </div>
+                </div>
+                <button id="closeAiModalBtn" class="modal-close-btn">&times;</button>
+            </div>
+            
+            <div class="ai-modal-tabs">
+                <button class="ai-tab-btn active" data-aitab="aiRecommendTab">­ƒñû ß×Äßƒéß×ôß×Âßƒå Clip (AI Highlights)</button>
+                <button class="ai-tab-btn" data-aitab="aiVoiceTab">­ƒÄñ ß×öß×ëßƒÆß×çß×Âß×ƒßƒåß×íßƒüß×äß×üßƒÆß×ÿßƒéß×Ü (Voice Command)</button>
+                <button class="ai-tab-btn" data-aitab="aiConfigTab">ÔÜÖ´©Å ß×Çßƒåß×Äß×Åßƒï Gemini API Key</button>
+            </div>
+
+            <div class="modal-body ai-modal-body">
+                <!-- TAB 1: AI Recommend -->
+                <div id="aiRecommendTab" class="ai-tab-content active">
+                    <div class="ai-control-banner">
+                        <div class="ai-banner-info">
+                            <h4>­ƒÄ» ß×ƒßƒÆß×Çßƒéß×ô &amp; ß×£ß×Àß×ùß×Âß×éß×ƒßƒåß×íßƒüß×ä full video ß×Üß×Ç Clip ß×èßƒéß×øß×æß×Âß×Çßƒïß×æß×Âß×ëß×ößƒåß×òß×╗ß×Å</h4>
+                            <p>AI ß×ôß×╣ß×äß×ƒßƒÆß×èß×Âß×ößƒïß×ƒßƒåß×íßƒüß×ä ß×£ß×Àß×ùß×Âß×éß×àßƒåß×ôß×╗ß×àß×ÇßƒÆß×Åßƒà (High Energy), ß×êß×╗ß×Åß×ôß×Àß×Öß×Âß×Öß×ƒßƒåß×üß×Âß×ôßƒï, ß×ôß×Àß×äß×öß×äßƒÆß×Çß×¥ß×Åß×àßƒåß×Äß×äß×çß×¥ß×äß×üßƒÆß×ÿßƒéß×Üß×æß×Âß×Çßƒïß×æß×Âß×ë auto!</p>
+                        </div>
+                        <button id="startAiAnalysisBtn" class="btn btn-ai-sparkle btn-lg" disabled>
+                            ­ƒÜÇ ß×àß×Âß×ößƒïß×òßƒÆß×Åß×¥ß×ÿ AI ß×£ß×Àß×ùß×Âß×é (Scan Video)
+                        </button>
+                    </div>
+
+                    <!-- Mandatory Ollama Installation Alert Box -->
+                    <div id="ollamaRequiredAlert" class="hidden" style="background:rgba(239, 68, 68, 0.12); border:1px solid rgba(239, 68, 68, 0.4); border-radius:12px; padding:16px; margin-bottom:16px;">
+                        <div style="display:flex; align-items:flex-start; gap:12px;">
+                            <span style="font-size:1.8rem;">ÔÜá´©Å</span>
+                            <div style="flex:1;">
+                                <h4 style="color:#f87171; margin:0 0 6px 0; font-size:1.05rem;">ß×Åß×ÿßƒÆß×Üß×╝ß×£ß×▒ßƒÆß×Öß×èßƒåß×íß×¥ß×ä Ollama (Local AI) ß×çß×Âß×ÿß×╗ß×ôß×ƒß×Àß×ô!</h4>
+                                <p style="color:#e2e8f0; font-size:0.88rem; margin:0 0 12px 0; line-height:1.5;">
+                                    ß×Çß×ÿßƒÆß×ÿß×£ß×Àß×Æß×©ß×ôßƒüßƒçß×Åß×ÿßƒÆß×Üß×╝ß×£ß×▒ßƒÆß×Öß×ÿß×Âß×ô <strong>Ollama (Local Gemma 3 Model)</strong> ß×øß×¥ß×ÿßƒëß×Âß×ƒßƒèß×©ß×ô PC ß×Üß×öß×ƒßƒïß×óßƒÆß×ôß×Ç ß×èß×¥ß×ÿßƒÆß×öß×©ß×ƒßƒÆß×èß×Âß×ößƒïß×ƒßƒåß×íßƒüß×äß×üßƒÆß×ÿßƒéß×Ü ß×ôß×Àß×äß×öß×äßƒÆß×Çß×¥ß×Å Clip ß×èßƒäß×Öß×Ñß×Åß×éß×Àß×Åß×ÉßƒÆß×øßƒâ ß×ÿß×Àß×ôß×öß×Âß×àßƒïß×ößƒÆß×Üß×¥ API Key!
+                                </p>
+                                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                                    <a href="https://ollama.com/download" target="_blank" class="btn btn-primary" style="background:#ef4444; border-color:#dc2626; text-decoration:none; padding:8px 16px; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">
+                                        ­ƒôÑ Download &amp; Install Ollama (ollama.com)
+                                    </a>
+                                    <button type="button" id="recheckOllamaBtn" class="btn btn-secondary" style="padding:8px 14px;">
+                                        ­ƒöä ß×ûß×Àß×ôß×Àß×ÅßƒÆß×Öß×Çß×Âß×Üß×èßƒåß×íß×¥ß×äß×íß×¥ß×äß×£ß×Àß×ë
+                                    </button>
+                                </div>
+                                <small style="color:#94a3b8; display:block; margin-top:8px;">
+                                    * ß×ÇßƒÆß×Üßƒäß×Öß×ûßƒüß×ø Download ß×ôß×Àß×ä Install ß×Üß×¢ß×à ß×ƒß×╝ß×ÿß×àß×╗ß×àß×ößƒèß×╝ß×Åß×╗ß×ä "ß×ûß×Àß×ôß×Àß×ÅßƒÆß×Öß×Çß×Âß×Üß×èßƒåß×íß×¥ß×äß×íß×¥ß×äß×£ß×Àß×ë" ß×èß×¥ß×ÿßƒÆß×öß×©ß×àß×Âß×ößƒïß×òßƒÆß×Åß×¥ß×ÿß×ößƒÆß×Üß×¥ AI!
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-config-bar-inline" style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px; background:rgba(15,23,42,0.75); padding:14px 16px; border-radius:10px; border:1px solid rgba(139, 92, 246, 0.35);">
+                        <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <label style="font-size:0.85rem; color:#cbd5e1; font-weight:700;">ÔÅ▒´©Å ß×Üß×Ößƒêß×ûßƒüß×ø Clip:</label>
+                                <select id="aiDurationModeSelect" class="form-control" style="width:auto; padding:5px 10px; font-size:0.85rem;">
+                                    <option value="dynamic" selected>Ô£¿ ß×Åß×Âß×ÿß×ƒß×Âß×àßƒïß×Æß×ÿßƒîß×óß×╝ß×Åß×╝ (ßƒómn, ßƒó.ßƒÑmn, ßƒúmn, ßƒú.ßƒÑmn... ß×îß×©ß×Äß×Âß×ÿß×Àß×Ç)</option>
+                                    <option value="120">­ƒô£ ßƒó ß×ôß×Âß×æß×© (120s)</option>
+                                    <option value="150">­ƒô£ ßƒó.ßƒÑ ß×ôß×Âß×æß×© (150s)</option>
+                                    <option value="180">­ƒô£ ßƒú ß×ôß×Âß×æß×© (180s)</option>
+                                    <option value="210">­ƒô£ ßƒú.ßƒÑ ß×ôß×Âß×æß×© (210s)</option>
+                                    <option value="240">­ƒô£ ßƒñ ß×ôß×Âß×æß×© (240s)</option>
+                                    <option value="300">­ƒô£ ßƒÑ ß×ôß×Âß×æß×© (300s)</option>
+                                    <option value="short">ÔÜí ßƒúßƒá ß×£ß×Àß×ôß×Âß×æß×© - ßƒí ß×ôß×Âß×æß×© (Shorts / Reels)</option>
+                                </select>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <label style="font-size:0.85rem; color:#cbd5e1; font-weight:700;">­ƒ¬À ß×ößƒÆß×Üß×Æß×Âß×ôß×öß×æß×æßƒüß×ƒß×ôß×Â:</label>
+                                <select id="aiCategorySelect" class="form-control" style="width:auto; padding:5px 10px; font-size:0.85rem;">
+                                    <option value="phka_samaki">­ƒî© ß×öß×╗ß×ÄßƒÆß×Öß×òßƒÆß×Çß×Âß×ößƒÆß×Üß×Âß×Çßƒïß×ƒß×Âß×ÿß×éßƒÆß×éß×© &amp; ß×öß×╗ß×ÄßƒÆß×Öß×ùß×╝ß×ÿß×À</option>
+                                    <option value="dakkhina">­ƒ¬À ß×öß×╗ß×ÄßƒÆß×Öß×æß×ÇßƒÆß×üß×Àß×Äß×Âß×ôß×╗ß×ößƒÆß×öß×æß×Âß×ô (ß×óß×äßƒÆß×é ßƒú ß×ôßƒâß×öß×╗ß×ÄßƒÆß×Ö)</option>
+                                    <option value="death">­ƒÆÇ ß×ƒßƒüß×àß×ÇßƒÆß×èß×©ß×ƒßƒÆß×øß×Âß×ößƒï &amp; ß×ÿß×Üß×Äß×ƒßƒÆß×ƒß×Åß×À</option>
+                                    <option value="birth4">­ƒæÂ ß×Çßƒåß×Äß×¥ß×Åß×ƒß×ÅßƒÆß×£ß×ÿß×Âß×ô ßƒñ ß×ößƒÆß×Üß×ùßƒüß×æ</option>
+                                    <option value="pchum_kathin">­ƒ¬À ß×öß×╗ß×ÄßƒÆß×Öß×ùßƒÆß×çß×╗ßƒåß×öß×Àß×ÄßƒÆß×î &amp; ß×Çß×ïß×Àß×ôß×æß×Âß×ô</option>
+                                    <option value="education">­ƒÆí ß×Æß×ÿßƒîß×óß×ößƒïß×Üßƒåß×àß×Àß×ÅßƒÆß×Å &amp; ß×æß×ƒßƒÆß×ƒß×ôßƒêß×çß×©ß×£ß×Àß×Å</option>
+                                    <option value="auto" selected>Ô£¿ AI ß×£ß×Àß×ùß×Âß×éß×Åß×Âß×ÿß×ƒß×Âß×àßƒïß×Æß×ÿßƒîß×óß×╝ß×Åß×╝ (Auto Match)</option>
+                                    <option value="custom">Ô£ì´©Å ß×£ß×Âß×Öß×ößƒÆß×Üß×Æß×Âß×ôß×öß×æß×òßƒÆß×æß×Âß×øßƒïß×üßƒÆß×øß×¢ß×ô (Custom)...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="aiCustomTopicRow" class="hidden" style="display:flex; align-items:center; gap:8px;">
+                            <label style="font-size:0.82rem; color:#a78bfa; font-weight:700; white-space:nowrap;">Ô£ì´©Å ß×àßƒåß×Äß×äß×çß×¥ß×äß×ößƒÆß×Üß×Æß×Âß×ôß×öß×æ:</label>
+                            <input type="text" id="aiCustomTopicInput" class="form-control" placeholder="ß×º. ß×öß×╗ß×ÄßƒÆß×Öß×òßƒÆß×Çß×Âß×ößƒÆß×Üß×Âß×Çßƒïß×ƒß×Âß×ÿß×éßƒÆß×éß×© ß×¼ ß×Çßƒåß×Äß×¥ß×Åß×ƒß×ÅßƒÆß×£ß×ÿß×Âß×ôßƒñ..." style="font-size:0.85rem;">
+                        </div>
+
+                        <!-- Gemini API Key Input Row (Direct Browser-to-Gemini AI for Vercel) -->
+                        <div style="display:flex; align-items:center; gap:8px; background:rgba(167,139,250,0.08); border:1px dashed rgba(167,139,250,0.3); border-radius:8px; padding:8px 12px; flex-wrap:wrap;">
+                            <label style="font-size:0.82rem; color:#c084fc; font-weight:700; white-space:nowrap; display:flex; align-items:center; gap:4px;">
+                                ­ƒöæ Gemini API Key <span style="font-weight:400; color:#cbd5e1; font-size:0.75rem;">(ß×Öß×Ç Key ß×Ñß×Åß×éß×Àß×Åß×ÉßƒÆß×øßƒâß×ûß×© <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#a78bfa; text-decoration:underline;">aistudio.google.com</a>):</span>
+                            </label>
+                            <div style="display:flex; align-items:center; gap:6px; flex:1; min-width:260px;">
+                                <input type="password" id="geminiApiKeyInput" class="form-control" placeholder="AIzaSy... (ß×ößƒëßƒçß×æß×©ß×ôßƒüßƒçß×èß×¥ß×ÿßƒÆß×öß×©ß×èß×Âß×Çßƒï Key)" style="font-size:0.82rem; font-family:monospace; background:rgba(0,0,0,0.3); color:#f3e8ff;">
+                                <button type="button" id="toggleApiKeyVisibilityBtn" class="btn btn-secondary btn-sm" style="padding:3px 8px; font-size:0.78rem;" title="ß×öß×äßƒÆß×áß×Âß×ë/ß×øß×Âß×Çßƒï Key">­ƒæü´©Å</button>
+                            </div>
+                            <span id="geminiApiKeyStatusBadge" style="font-size:0.75rem; background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); padding:2px 8px; border-radius:4px; white-space:nowrap;">
+                                ­ƒÆí ß×ÿß×Àß×ôß×æß×Âß×ôßƒïß×èß×Âß×Çßƒï Key (ß×ößƒÆß×Üß×¥ Auto Preset)
+                            </span>
+                        </div>
+
+                        <div style="display:flex; align-items:center; gap:12px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; flex-wrap:wrap;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <input type="checkbox" id="aiSkipIntroChantCheck" checked style="width:16px; height:16px; cursor:pointer;">
+                                <label for="aiSkipIntroChantCheck" style="font-size:0.82rem; color:#fbbf24; cursor:pointer; font-weight:600;">
+                                    ÔÅ® ß×Üßƒåß×øß×äß×öß×æß×ôß×ÿß×ƒß×Àß×Çß×Âß×Üß×èß×¥ß×ÿß×£ß×©ß×èßƒüß×óß×╝ (ß×ôß×ÿßƒä ß×Åß×ƒßƒÆß×ƒ...)
+                                </label>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <label for="aiIntroSkipDurationSelect" style="font-size:0.82rem; color:#cbd5e1; font-weight:600;">ß×Üßƒåß×øß×äß×èß×¥ß×ÿß×£ß×©ß×èßƒüß×óß×╝:</label>
+                                <select id="aiIntroSkipDurationSelect" class="form-control" style="width:auto; padding:3px 8px; font-size:0.8rem;">
+                                    <option value="300" selected>ßƒÑ ß×ôß×Âß×æß×© (ß×ƒßƒÆß×èß×äßƒïß×èß×Âß×Üß×æßƒüß×ƒß×ôß×Âß×£ßƒéß×ä)</option>
+                                    <option value="180">ßƒú ß×ôß×Âß×æß×©</option>
+                                    <option value="420">ßƒº ß×ôß×Âß×æß×©</option>
+                                    <option value="600">ßƒíßƒá ß×ôß×Âß×æß×© (ß×öß×æß×ôß×ÿß×ƒß×Àß×Çß×Âß×Üß×£ßƒéß×ä)</option>
+                                    <option value="0">ß×ÿß×Àß×ôß×Üßƒåß×øß×ä (ßƒá ß×ôß×Âß×æß×©)</option>
+                                </select>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <input type="checkbox" id="aiAutoBurnSubtitlesCheck" checked style="width:16px; height:16px; cursor:pointer;">
+                                <label for="aiAutoBurnSubtitlesCheck" style="font-size:0.82rem; color:#34d399; cursor:pointer; font-weight:600;">
+                                    ­ƒÄÖ´©Å ß×öß×äßƒÆß×Çß×ößƒïß×óß×ÇßƒÆß×ƒß×Üß×Üß×Åßƒïß×üßƒÆß×ÿßƒéß×Üß×óß×╝ß×Åß×╝ (Auto Burn-in Captions)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scanning / Processing Visualizer -->
+                    <div id="aiScanProgressBox" class="ai-progress-box hidden">
+                        <div class="waveform-visualizer-container">
+                            <canvas id="aiWaveformCanvas" width="600" height="60"></canvas>
+                        </div>
+                        <div class="ai-progress-bar-container">
+                            <div id="aiScanProgressBar" class="ai-progress-bar-fill" style="width: 0%;"></div>
+                        </div>
+                        <div class="ai-scan-status">
+                            <span id="aiScanStatusText">­ƒñû ß×Çßƒåß×ûß×╗ß×äß×ƒßƒÆß×èß×Âß×ößƒïß×ƒßƒåß×íßƒüß×ä &amp; ß×£ß×Àß×ùß×Âß×é Peaks...</span>
+                            <span id="aiScanPercentText">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="aiResultsSection" class="ai-results-section">
+                        <div class="ai-results-header">
+                            <h4>­ƒÄ¼ Clips ß×èßƒéß×Ü AI ß×Äßƒéß×ôß×Âßƒå (<span id="aiResultsCount">0</span>)</h4>
+                            <button id="importAllAiClipsBtn" class="btn btn-success btn-sm hidden">
+                                ÔÜí ß×öß×ëßƒÆß×àß×╝ß×ø Clips ß×æß×Âßƒåß×äß×óß×ƒßƒï (<span id="importAllCount">0</span>)
+                            </button>
+                        </div>
+
+                        <div id="aiClipsGrid" class="ai-clips-grid">
+                            <div class="ai-empty-placeholder">
+                                <span class="placeholder-icon">­ƒÄÖ´©Å</span>
+                                <p>ß×ƒß×╝ß×ÿß×àß×╗ß×àß×ößƒèß×╝ß×Åß×╗ß×ä <strong>"­ƒÜÇ ß×àß×Âß×ößƒïß×òßƒÆß×Åß×¥ß×ÿ AI ß×£ß×Àß×ùß×Âß×é"</strong> ß×èß×¥ß×ÿßƒÆß×öß×©ß×▓ßƒÆß×Ö AI ß×ƒßƒÆß×èß×Âß×ößƒï ß×ôß×Àß×äß×ƒßƒÆß×£ßƒéß×äß×Üß×Ç Clip ß×øßƒÆß×óßƒù!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Voice Commands -->
+                <div id="aiVoiceTab" class="ai-tab-content">
+                    <div class="voice-assistant-card">
+                        <div class="mic-status-box">
+                            <button id="toggleVoiceMicBtn" class="btn btn-mic-toggle">
+                                <span class="mic-icon">­ƒÄÖ´©Å</span>
+                                <span id="micBtnText">ß×öß×¥ß×Çß×ƒßƒÆß×èß×Âß×ößƒïß×ƒßƒåß×íßƒüß×äß×üßƒÆß×ÿßƒéß×Ü</span>
+                            </button>
+                            <span id="voiceStatusBadge" class="voice-badge offline">ß×öß×Àß×æ</span>
+                        </div>
+
+                        <div class="khmer-speech-box">
+                            <label>ß×óß×ÇßƒÆß×ƒß×Üß×èßƒéß×ø AI ß×ƒßƒÆß×èß×Âß×ößƒïß×öß×Âß×ô (Live Transcription):</label>
+                            <div id="liveSpeechTranscript" class="speech-output-area">
+                                <em>ß×àß×╗ß×àß×ößƒèß×╝ß×Åß×╗ß×äß×üß×Âß×äß×øß×¥ ß×Üß×¢ß×àß×ôß×Àß×Öß×Âß×Öß×ùß×Âß×ƒß×Âß×üßƒÆß×ÿßƒéß×Ü...</em>
+                            </div>
+                        </div>
+
+                        <div class="voice-commands-guide">
+                            <h5>­ƒÆí ß×ûß×Âß×ÇßƒÆß×Öß×öß×ëßƒÆß×çß×Âß×ƒßƒåß×íßƒüß×äß×üßƒÆß×ÿßƒéß×Üß×èßƒéß×øß×éß×Âßƒåß×æßƒÆß×Ü (Khmer Voice Commands):</h5>
+                            <div class="command-grid">
+                                <div class="cmd-item"><code>"ß×Çß×Âß×Åßƒïß×èß×¥ß×ÿ"</code> ß×¼ <code>"Set In"</code> Ô×ö ß×Çßƒåß×Äß×Åßƒï Set In</div>
+                                <div class="cmd-item"><code>"ß×Çß×Âß×Åßƒïß×àß×╗ß×ä"</code> ß×¼ <code>"Set Out"</code> Ô×ö ß×Çßƒåß×Äß×Åßƒï Set Out</div>
+                                <div class="cmd-item"><code>"ß×öß×ôßƒÆß×Éßƒéß×ÿ clip"</code> Ô×ö ß×Üß×ÇßƒÆß×ƒß×Âß×æß×╗ß×Ç Clip</div>
+                                <div class="cmd-item"><code>"ß×£ß×Àß×ùß×Âß×é video"</code> Ô×ö ß×öß×¥ß×Ç AI ß×£ß×Àß×ùß×Âß×é</div>
+                                <div class="cmd-item"><code>"ß×æßƒàß×Çßƒéß×óß×ÇßƒÆß×ƒß×Ü"</code> Ô×ö ß×æßƒàß×Çß×Âß×ôßƒï Studio Screen 2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: AI Configuration / Gemini Key -->
+                <div id="aiConfigTab" class="ai-tab-content">
+                    <div class="config-card">
+                        <h4>­ƒöæ Google Gemini API Key (ß×çß×ÿßƒÆß×Üß×¥ß×ƒ advanced)</h4>
+                        <p class="help-text">ß×óßƒÆß×ôß×Çß×óß×Âß×àß×èß×Âß×Çßƒï Gemini API Key ß×òßƒÆß×æß×Âß×øßƒïß×üßƒÆß×øß×¢ß×ôß×èß×¥ß×ÿßƒÆß×öß×©ß×óßƒäß×Ö AI ß×£ß×Àß×ùß×Âß×é context ß×ôß×Àß×ä transcript ß×ƒßƒåß×íßƒüß×äß×üßƒÆß×ÿßƒéß×Üß×Çß×Âß×ôßƒïß×Åßƒéß×ƒß×╗ß×ÇßƒÆß×Üß×╣ß×Å ß×ôß×Àß×äß×£ßƒâß×åßƒÆß×øß×Âß×Å!</p>
+                        
+                        <div class="form-group" style="margin-top: 14px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                                <label for="geminiApiKeyInput" style="margin-bottom:0;">Gemini API Key:</label>
+                                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-secondary btn-xs" style="text-decoration:none; padding: 4px 10px; font-size: 0.78rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.4);">
+                                    ­ƒöù ß×Öß×Ç API Key ß×Ñß×Åß×éß×Àß×Åß×ÉßƒÆß×øßƒâß×ôßƒà Google AI Studio
+                                </a>
+                            </div>
+                            <div class="input-with-btn">
+                                <input type="password" id="geminiApiKeyInput" class="form-control" placeholder="AIzaSy...">
+                                <button id="saveGeminiKeyBtn" class="btn btn-primary btn-sm">­ƒÆ¥ ß×Üß×ÇßƒÆß×ƒß×Âß×æß×╗ß×Ç</button>
+                            </div>
+                        </div>
+                        <div id="geminiKeyStatus" class="key-status-msg"></div>
+
+                        <div class="engine-info-box" style="margin-top: 20px;">
+                            <h5>Ôä╣´©Å ß×Üß×ößƒÇß×öß×èßƒåß×Äß×¥ß×Üß×Çß×Âß×Ü default (ß×èßƒäß×Öß×ÿß×Àß×ôß×öß×Âß×àßƒïß×ößƒÆß×Üß×¥ API Key):</h5>
+                            <p>ß×ößƒÆß×Üß×ƒß×Àß×ôß×öß×¥ß×ÿß×Àß×ôß×ÿß×Âß×ô API Key ß×ößƒÆß×Üß×ûßƒÉß×ôßƒÆß×Æß×ôß×╣ß×äß×ößƒÆß×Üß×¥ <strong>Local Khmer Audio Waveform &amp; Speech Heuristic Engine</strong> ß×èß×¥ß×ÿßƒÆß×öß×©ß×ƒßƒÆß×Çßƒéß×ôß×Üß×Ç dynamic loud speech, vocal energy peaks, ß×ôß×Àß×ä speech breaks ß×ôßƒàß×ÇßƒÆß×ôß×╗ß×äß×£ß×©ß×èßƒüß×óß×╝ ß×èß×¥ß×ÿßƒÆß×öß×©ß×öß×äßƒÆß×Çß×¥ß×Å clips ß×èßƒäß×Öß×Ñß×Åß×éß×Àß×Åß×ÉßƒÆß×øßƒâ!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</body>
+</html>

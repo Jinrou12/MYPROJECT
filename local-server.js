@@ -22,7 +22,13 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer((req, res) => {
-  let reqPath = req.url.split('?')[0];
+  let reqPath;
+  try {
+    reqPath = decodeURIComponent(req.url.split('?')[0]);
+  } catch (e) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    return res.end('400 Bad Request: Malformed URL');
+  }
   if (reqPath === '/') reqPath = '/index.html';
   
   let filePath = path.join(PUBLIC_DIR, reqPath);
