@@ -300,7 +300,8 @@ function handleLogoError(img, customDomain) {
     img.src = sources[currentIndex];
   } else {
     // Generate dynamic colorful SVG Monogram badge
-    const initial = domain ? domain.charAt(0).toUpperCase() : 'W';
+    const titleText = img.alt || domain || 'W';
+    const initial = titleText.trim().charAt(0).toUpperCase();
     
     const colors = [
       ['%234f46e5', '%23818cf8'], // Indigo
@@ -445,11 +446,11 @@ function renderManagerTable() {
           <div class="table-app-info">
             <div class="table-app-img-wrapper">
               <img src="${mainImage}" class="table-app-thumb" alt="${app.title}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
-              <img src="${logoSources[0] || ''}" class="table-favicon-badge" title="Logo Website: ${domain}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
+              <img src="${logoSources[0] || ''}" class="table-favicon-badge" alt="${app.title}" title="Logo Website: ${domain}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
             </div>
             <div>
               <div style="font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                <img src="${logoSources[0] || ''}" class="title-inline-favicon" alt="Website Logo" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
+                <img src="${logoSources[0] || ''}" class="title-inline-favicon" alt="${app.title}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
                 <span>${app.title}</span>
               </div>
               <div class="table-url-link-row">
@@ -678,7 +679,7 @@ function renderApps() {
         <div class="app-card-body">
           <div class="app-header-row">
             <div class="app-title-group">
-              <img src="${logoSources[0] || ''}" class="card-site-favicon" alt="Site Logo" title="Website Logo (${domain})" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
+              <img src="${logoSources[0] || ''}" class="card-site-favicon" alt="${app.title}" title="Website Logo (${domain})" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
               <h3 class="app-title">${app.title}</h3>
             </div>
           </div>
