@@ -1,29 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1e40af"/>
-      <stop offset="100%" stop-color="#1e3a8a"/>
+    <linearGradient id="resizVdoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
     </linearGradient>
-    <linearGradient id="arrow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="100%" stop-color="#0ea5e9"/>
-    </linearGradient>
+    <filter id="rvShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-opacity="0.35"/>
+    </filter>
   </defs>
-  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
-  <!-- Video file icon -->
-  <rect x="100" y="90" width="200" height="250" rx="16" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="4"/>
-  <!-- Folded corner -->
-  <polygon points="260,90 300,130 260,130" fill="rgba(255,255,255,0.2)"/>
-  <!-- Video play in file -->
-  <circle cx="200" cy="220" r="50" fill="rgba(56,189,248,0.3)"/>
-  <polygon points="185,198 185,242 228,220" fill="white"/>
-  <!-- Arrow right (resize/convert) -->
-  <path d="M315,220 L395,220" stroke="url(#arrow)" stroke-width="14" stroke-linecap="round"/>
-  <polygon points="385,202 415,220 385,238" fill="#38bdf8"/>
-  <!-- Output/target frame 16:9 -->
-  <rect x="330" y="90" width="130" height="73" rx="8" fill="rgba(56,189,248,0.2)" stroke="#38bdf8" stroke-width="4"/>
-  <text x="395" y="135" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="14" fill="#38bdf8">1920×1080</text>
-  <!-- Resize arrows -->
-  <text x="256" y="400" text-anchor="middle" font-family="Arial" font-size="100" fill="rgba(56,189,248,0.4)">⇔</text>
-  <text x="256" y="460" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="22" fill="rgba(255,255,255,0.5)">VIDEO RESIZER</text>
+  <circle cx="24" cy="24" r="23" fill="url(#resizVdoGrad)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+  <g filter="url(#rvShadow)">
+    <path d="M16 31V19a2 2 0 012-2h8l6 6v8a2 2 0 01-2 2H18a2 2 0 01-2-2z" stroke="white" stroke-width="2.2" stroke-linejoin="round" fill="rgba(255,255,255,0.12)"/>
+    <path d="M26 17v6h6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M20 27l2.5 2.5 5-5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>

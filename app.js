@@ -37,6 +37,22 @@ const DEFAULT_APPS = [
     createdAt: "2026-09-04"
   },
   {
+    id: "app-attenden",
+    title: "ប្រព័ន្ធគ្រប់គ្រងអវត្តមានសិស្ស (Student Attendance)",
+    category: "Web",
+    description: "ប្រព័ន្ធគ្រប់គ្រងអវត្តមានសិស្ស ថ្នាក់ទី ១០ A និងទិន្នន័យប្រចាំថ្ងៃ ប្រចាំខែ ជាមួយស្ថិតិក្រាហ្វិក នាំចេញ Excel និងរបាយការណ៍ស្វ័យប្រវត្តិ។",
+    descriptionEn: "High School Student Attendance & Absence Management System with analytics, charts, and Excel export.",
+    url: "https://attenden.vercel.app/",
+    imageUrl: "images/attenden_banner.jpg",
+    logoUrl: "images/attenden_logo.png",
+    tags: ["Web App", "Attendance", "Chart.js", "Excel Export", "Khmer UI"],
+    githubUrl: "",
+    views: 3150,
+    likes: 218,
+    featured: true,
+    createdAt: "2026-09-04"
+  },
+  {
     id: "app-1",
     title: "Bulk Poster Generator",
     category: "Tool",
@@ -271,6 +287,37 @@ let mgrActiveCategory = "All";
 let searchQuery = "";
 let sortBy = "featured";
 
+// --- Known Real Web Apps Logo & Banner Catalog ---
+function resolveKnownAppLogo(url = "", title = "") {
+  const str = ((url || "") + " " + (title || "")).toLowerCase();
+  if (str.includes("resize-vdo") || str.includes("resizvdo")) return "images/resizvdo_logo.svg";
+  if (str.includes("football")) return "images/football_logo.svg";
+  if (str.includes("remove-logo") || str.includes("logoremove")) return "images/logoremove_logo.svg";
+  if (str.includes("bulk-poster") || str.includes("bulkposter")) return "images/bulkposter_logo.svg";
+  if (str.includes("vdo-to-clip") || str.includes("vdoclip")) return "images/vdoclip_logo.svg";
+  if (str.includes("khemvoen") || str.includes("វត្តខេមរវ័ន")) return "images/khemvoen_logo.png";
+  if (str.includes("attenden") || str.includes("អវត្តមានថ្នាក់") || str.includes("student attendance")) return "images/attenden_logo.png";
+  if (str.includes("jobslak") || str.includes("ស្លាកលេខ") || str.includes("tag & location")) return "images/jobslak_logo.jpg";
+  if (str.includes("neotrade")) return "images/neotrade_logo.svg";
+  if (str.includes("omni")) return "images/omnistore_logo.svg";
+  return "";
+}
+
+function resolveKnownAppBanner(url = "", title = "") {
+  const str = ((url || "") + " " + (title || "")).toLowerCase();
+  if (str.includes("resize-vdo") || str.includes("resizvdo")) return "images/resizvdo_banner.jpg";
+  if (str.includes("football")) return "images/football_banner.jpg";
+  if (str.includes("remove-logo") || str.includes("logoremove")) return "images/logoremove_banner.jpg";
+  if (str.includes("bulk-poster") || str.includes("bulkposter")) return "images/bulkposter_banner.jpg";
+  if (str.includes("vdo-to-clip") || str.includes("vdoclip")) return "images/vdoclip_banner.jpg";
+  if (str.includes("khemvoen") || str.includes("វត្តខេមរវ័ន")) return "images/khemvoen_banner.png";
+  if (str.includes("attenden") || str.includes("អវត្តមានថ្នាក់") || str.includes("student attendance")) return "images/attenden_banner.jpg";
+  if (str.includes("jobslak") || str.includes("ស្លាកលេខ") || str.includes("tag & location")) return "images/jobslak_banner.png";
+  if (str.includes("neotrade")) return "images/neotrade_banner.jpg";
+  if (str.includes("omni")) return "images/omnistore_banner.jpg";
+  return "";
+}
+
 // --- Website Logo & Favicon Extraction Helpers ---
 function getLogoSources(url, size = 256, customLogoUrl = null) {
   if (!url || typeof url !== 'string') return customLogoUrl ? [customLogoUrl] : ['images/jobslak_logo.jpg'];
@@ -284,30 +331,40 @@ function getLogoSources(url, size = 256, customLogoUrl = null) {
 
     const sources = [];
 
-    if (customLogoUrl && customLogoUrl.trim() !== '') {
-      sources.push(customLogoUrl);
+    // 1. High-precision known authentic app logo detection
+    const knownLogo = resolveKnownAppLogo(cleanUrl);
+    if (knownLogo) {
+      sources.push(knownLogo);
     }
 
-    if (domain.includes('jobslak')) {
-      sources.push('images/jobslak_logo.jpg');
+    // 2. Custom logo URL if provided and not generic google favicon
+    if (customLogoUrl && customLogoUrl.trim() !== '' && !customLogoUrl.includes('google.com/s2/favicons')) {
+      if (!sources.includes(customLogoUrl)) {
+        sources.unshift(customLogoUrl);
+      }
     }
 
-    if (domain.includes('khemvoen')) {
-      sources.push('images/khemvoen_logo.png');
-    }
-
+    // 3. Domain direct assets (apple touch icon, favicon, app logos)
     sources.push(
-      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
-      `https://icons.duckduckgo.com/ip3/${domain}.ico`,
       `https://${domain}/apple-touch-icon.png`,
+      `https://${domain}/apple-touch-icon-precomposed.png`,
       `https://${domain}/favicon.ico`,
+      `https://${domain}/favicon.png`,
+      `https://${domain}/img/logo.png`,
+      `https://${domain}/assets/logo.png`
+    );
+
+    // 4. Remote fallbacks
+    sources.push(
       `https://unavatar.io/${domain}?fallback=false`,
-      `https://logo.clearbit.com/${domain}`
+      `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
     );
 
     return sources;
   } catch (e) {
-    return customLogoUrl ? [customLogoUrl] : ['images/jobslak_logo.jpg'];
+    const known = resolveKnownAppLogo(url);
+    return known ? [known] : (customLogoUrl ? [customLogoUrl] : ['images/jobslak_logo.jpg']);
   }
 }
 
@@ -746,6 +803,30 @@ function loadAppsData() {
     } else {
       userCustomApps.push(item);
     }
+  });
+
+  // Ensure user custom apps have authentic real logos and banners if known
+  userCustomApps = userCustomApps.map(item => {
+    const cleanUrl = item.url || '';
+    const cleanTitle = item.title || '';
+    const resolvedLogo = resolveKnownAppLogo(cleanUrl, cleanTitle);
+    const resolvedBanner = resolveKnownAppBanner(cleanUrl, cleanTitle);
+
+    let logoUrl = item.logoUrl;
+    if (!logoUrl || logoUrl.includes('google.com/s2/favicons') || logoUrl.trim() === '' || resolvedLogo) {
+      logoUrl = resolvedLogo || logoUrl || '';
+    }
+
+    let imageUrl = item.imageUrl;
+    if (!imageUrl || imageUrl.includes('unsplash.com') || resolvedBanner) {
+      imageUrl = resolvedBanner || imageUrl || '';
+    }
+
+    return {
+      ...item,
+      logoUrl: resolvedLogo || logoUrl,
+      imageUrl: resolvedBanner || imageUrl
+    };
   });
 
   // Build official apps ensuring current banners and metadata are preserved
@@ -1314,12 +1395,17 @@ function setupEventListeners() {
       const app = appsData.find(a => a.id === id);
       if (!app) return;
 
-      app.title = document.getElementById("edit-title-input").value.trim();
+      const editUrl = document.getElementById("edit-url-input").value.trim();
+      const editTitle = document.getElementById("edit-title-input").value.trim();
+      const knownLogo = resolveKnownAppLogo(editUrl, editTitle);
+      const knownBanner = resolveKnownAppBanner(editUrl, editTitle);
+
+      app.title = editTitle;
       app.category = document.getElementById("edit-cat-input").value;
       app.description = document.getElementById("edit-desc-input").value.trim();
-      app.url = document.getElementById("edit-url-input").value.trim();
-      app.imageUrl = document.getElementById("edit-image-input").value.trim() || app.imageUrl;
-      app.logoUrl = document.getElementById("edit-logo-input").value.trim() || app.logoUrl;
+      app.url = editUrl;
+      app.imageUrl = document.getElementById("edit-image-input").value.trim() || knownBanner || app.imageUrl;
+      app.logoUrl = document.getElementById("edit-logo-input").value.trim() || knownLogo || app.logoUrl;
       
       const tagsRaw = document.getElementById("edit-tags-input").value.trim();
       app.tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : app.tags;
@@ -1376,6 +1462,12 @@ function setupEventListeners() {
 
       const tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : ["Web App", category];
 
+      const knownLogo = resolveKnownAppLogo(url, title);
+      const knownBanner = resolveKnownAppBanner(url, title);
+
+      const resolvedLogoUrl = logoUrl || knownLogo || '';
+      const resolvedImageUrl = imageUrl || knownBanner || (url ? `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(url)}` : '') || 'images/resizvdo_banner.jpg';
+
       const newApp = {
         id: "app-" + Date.now(),
         title,
@@ -1383,8 +1475,8 @@ function setupEventListeners() {
         description,
         descriptionEn: description,
         url,
-        imageUrl: imageUrl || getFaviconUrl(url, 128) || "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800",
-        logoUrl: logoUrl,
+        imageUrl: resolvedImageUrl,
+        logoUrl: resolvedLogoUrl,
         tags,
         githubUrl,
         views: 1,

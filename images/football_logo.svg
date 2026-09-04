@@ -1,13 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="128" fill="#141E30" />
-  <rect width="512" height="512" rx="128" fill="url(#grad)" />
-  <circle cx="256" cy="256" r="160" fill="#FFFFFF" />
-  <path d="M256 112c-79.5 0-144 64.5-144 144s64.5 144 144 144 144-64.5 144-144-64.5-144-144-144zm0 264c-66.2 0-120-53.8-120-120s53.8-120 120-120 120 53.8 120 120-53.8 120-120 120z" fill="#0d0f1a"/>
-  <path d="M256 160l-30 40h60zM196 220l-40 30 20 40h40zM316 220h40l20 40-40 30zM226 310l30 40 30-40h-60zM256 210l-20 30v40l20 30 20-30v-40z" fill="#0d0f1a"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#243B55" />
-      <stop offset="100%" stop-color="#141E30" />
+    <linearGradient id="fbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
     </linearGradient>
+    <linearGradient id="ballGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <filter id="fbGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#38bdf8" flood-opacity="0.4"/>
+    </filter>
   </defs>
+  <rect width="48" height="48" rx="12" fill="url(#fbGrad)" filter="url(#fbGlow)"/>
+  <rect width="48" height="48" rx="12" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+  <!-- Realistic Soccer Ball -->
+  <g transform="translate(8, 8)">
+    <circle cx="16" cy="16" r="14" fill="url(#ballGrad)" stroke="#0f172a" stroke-width="1.2"/>
+    <!-- Center pentagon -->
+    <polygon points="16,11 20,14 18.5,19 13.5,19 12,14" fill="#0f172a"/>
+    <!-- Lines to edges -->
+    <line x1="16" y1="11" x2="16" y2="4" stroke="#0f172a" stroke-width="1.2"/>
+    <line x1="20" y1="14" x2="27" y2="11" stroke="#0f172a" stroke-width="1.2"/>
+    <line x1="18.5" y1="19" x2="25" y2="25" stroke="#0f172a" stroke-width="1.2"/>
+    <line x1="13.5" y1="19" x2="7" y2="25" stroke="#0f172a" stroke-width="1.2"/>
+    <line x1="12" y1="14" x2="5" y2="11" stroke="#0f172a" stroke-width="1.2"/>
+    <!-- Edge pentagons -->
+    <polygon points="16,4 13,2 19,2" fill="#0f172a"/>
+    <polygon points="27,11 29,13 29,8" fill="#0f172a"/>
+    <polygon points="25,25 28,24 23,28" fill="#0f172a"/>
+    <polygon points="7,25 9,28 4,24" fill="#0f172a"/>
+    <polygon points="5,11 3,8 2,13" fill="#0f172a"/>
+  </g>
 </svg>

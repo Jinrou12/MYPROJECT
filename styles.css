@@ -1321,26 +1321,34 @@ footer {
 }
 
 .title-inline-favicon {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   object-fit: contain;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(13, 21, 38, 0.95);
+  border: 1.2px solid rgba(0, 242, 254, 0.35);
   padding: 2px;
   flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(0, 242, 254, 0.2);
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.25);
 }
 
 .card-site-favicon {
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   object-fit: contain;
-  background: rgba(255, 255, 255, 0.12);
-  padding: 2px;
-  border: 1px solid var(--border-glow);
-  box-shadow: 0 0 8px rgba(0, 242, 254, 0.25);
+  background: rgba(13, 21, 38, 0.95);
+  border: 1.5px solid rgba(0, 242, 254, 0.35);
+  padding: 3px;
   flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 242, 254, 0.2);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.app-card:hover .card-site-favicon {
+  transform: scale(1.15);
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.7);
+  border-color: var(--primary-cyan);
 }
 
 .app-title-group {
@@ -1434,32 +1442,6 @@ footer {
   font-weight: 700;
 }
 
-/* Card Title Favicon & Logo Styling */
-.app-title-group {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-.card-site-favicon,
-.title-inline-favicon {
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 2px;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.app-card:hover .card-site-favicon {
-  transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
-  border-color: var(--primary-cyan);
-}
 
 /* Admin Login Overlay */
 #admin-login-overlay {
