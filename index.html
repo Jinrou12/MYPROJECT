@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS - Web App Showcase & Tech Hub</title>
+  <meta name="description" content="គេហទំព័របង្ហាញ Web Applications ទំនើប បែប UX/UI Technology ជាមួយ Live Demo, Particle Animations, និង App Management">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Ambient Glow Background Orbs -->
+  <div class="bg-glow-orb orb-1"></div>
+  <div class="bg-glow-orb orb-2"></div>
+
+  <!-- Interactive Particle Network Canvas -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Sticky Glass Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="#" class="logo-brand">
+        <div class="logo-icon">
+          <i data-lucide="cpu"></i>
+        </div>
+        <div class="logo-text">NEXUS<span>.APP</span></div>
+      </a>
+
+      <div class="search-wrapper">
+        <i data-lucide="search" class="search-icon"></i>
+        <input type="text" id="search-input" class="search-input" placeholder="ស្វែងរក Web App ឬ Tech Stack..." data-i18n-placeholder="search_placeholder">
+      </div>
+
+      <div class="nav-right">
+        <div class="view-switch-group">
+          <button id="nav-view-showcase" class="view-nav-btn active">
+            <i data-lucide="layout-grid" style="width: 16px; height: 16px;"></i> Showcase View
+          </button>
+          <button id="nav-view-manager" class="view-nav-btn">
+            <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i> Manager Panel
+          </button>
+        </div>
+
+        <button id="lang-toggle-btn" class="lang-switch">
+          <i data-lucide="globe"></i> <span id="lang-text">ខ្មែរ / EN</span>
+        </button>
+
+        <button id="open-add-app-btn" class="btn btn-primary">
+          <i data-lucide="plus-circle"></i>
+          <span data-i18n="btn_add_app">បន្ថែម App ថ្មី</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- DEDICATED SHOWCASE VIEW SECTION -->
+    <div id="showcase-view-container">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span data-i18n="hero_badge">Next-Gen Web Applications Showcase</span>
+        </div>
+
+        <h1 class="hero-title" data-i18n="hero_title">
+          បណ្តុំ <span class="gradient-text">Web Applications</span> & <span class="gradient-purple">UX/UI Innovations</span> <span style="display: block; font-size: 2.2rem; letter-spacing: 2px; color: var(--primary-cyan); margin-top: 0.6rem;">BY: VISAL</span>
+        </h1>
+
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+          សូមស្វាគមន៍មកកាន់ Platform បង្ហាញ Web Apps ទំនើបៗ និងប្រព័ន្ធគ្រប់គ្រងសហសម័យ។ លោកអ្នកអាចធ្វើការតេស្តសាកល្បង Live Previews, ស្វែងរកមុខងារថ្មីៗ និងបន្ថែម Web App ផ្ទាល់ខ្លួនបានយ៉ាងងាយស្រួល។
+        </p>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-number" id="stat-total-apps">0</div>
+            <div class="stat-label" data-i18n="stat_total_apps">Web Apps សរុប</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="stat-total-views">12.8K</div>
+            <div class="stat-label" data-i18n="stat_total_views">ការចូលទស្សនា</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="stat-categories">3</div>
+            <div class="stat-label" data-i18n="stat_categories">ប្រភេទ (Categories)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filter & Category Section -->
+      <section class="filter-section">
+        <div class="filter-bar">
+          <div class="categories-scroll" id="categories-container">
+            <!-- Dynamic Category Buttons populated by JS -->
+          </div>
+
+          <div class="sort-wrapper">
+            <i data-lucide="sliders-horizontal" style="width: 16px; height: 16px;"></i>
+            <span data-i18n="sort_by">រៀបតាម:</span>
+            <select id="sort-select" class="sort-select">
+              <option value="featured" data-i18n="sort_featured">ពិសេស (Featured)</option>
+              <option value="recent" data-i18n="sort_recent">ថ្មីៗបំផុត (Recent)</option>
+              <option value="views" data-i18n="sort_popular">ការទស្សនាច្រើន (Popular)</option>
+              <option value="likes" data-i18n="sort_likes">ការចូលចិត្តច្រើន (Most Liked)</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- App Cards Grid -->
+      <section>
+        <div id="apps-grid" class="apps-grid">
+          <!-- Rendered dynamically by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Developer Profile & Contact Showcase Banner -->
+      <section class="dev-banner">
+        <div class="dev-info">
+          <div class="dev-tagline" data-i18n="dev_tagline">FULL-STACK DEVELOPER & UX/UI DESIGNER</div>
+          <h2 class="dev-name" data-i18n="dev_name">Visal Developer Portal</h2>
+          <p class="dev-bio" data-i18n="dev_bio">
+            ខ្ញុំប្តេជ្ញាចិត្តក្នុងការបង្កើត Web Applications ដែលមានសោភ័ណភាពខ្ពស់, ល្បឿនលឿន, និងផ្តល់បទពិសោធន៍ UX/UI លំដាប់ថ្នាក់ពិភពលោក។ ប្រសិនបើលោកអ្នកចង់បង្កើត Web App ផ្ទាល់ខ្លួន ឬចង់សហការ សូមទាក់ទងមកខ្ញុំបាន!
+          </p>
+          <div class="dev-skills-list">
+            <span class="skill-pill">⚡ React.js</span>
+            <span class="skill-pill">💎 TailwindCSS / Glassmorphism</span>
+            <span class="skill-pill">🚀 Node.js / Express</span>
+            <span class="skill-pill">🤖 AI Integration</span>
+            <span class="skill-pill">📊 Analytics Dashboards</span>
+          </div>
+        </div>
+
+        <div>
+          <button id="open-contact-btn" class="btn btn-outline-glow btn-lg" style="padding: 0.9rem 2rem; font-size: 1rem;">
+            <i data-lucide="mail"></i>
+            <span data-i18n="btn_contact_me">ទាក់ទងមកខ្ញុំ (Contact Dev)</span>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- DEDICATED SEPARATE MANAGER DASHBOARD VIEW SECTION -->
+    <div id="manager-view-container" class="manager-view-container" style="display: none;">
+      <div class="manager-header-bar">
+        <div class="manager-title-group">
+          <h2><i data-lucide="shield-check" style="color: var(--primary-cyan);"></i> App Manager Dashboard</h2>
+          <p>ផ្ទាំងគ្រប់គ្រងទិន្នន័យដាច់ដោយឡែក (Full Suite) សម្រាប់ Manage, Edit, Delete & Feature Web Apps</p>
+        </div>
+
+        <button id="view-add-app-btn" class="btn btn-primary">
+          <i data-lucide="plus-circle"></i>
+          <span data-i18n="btn_add_app">បន្ថែម App ថ្មី</span>
+        </button>
+      </div>
+
+      <!-- Summary Metric Cards -->
+      <div class="manager-stats-grid">
+        <div class="m-stat-card">
+          <div class="m-stat-val" id="view-mgr-stat-total">0</div>
+          <div class="m-stat-lbl" data-i18n="mgr_stat_total">Web Apps សរុប</div>
+        </div>
+        <div class="m-stat-card">
+          <div class="m-stat-val" id="view-mgr-stat-featured" style="color: var(--accent-purple);">0</div>
+          <div class="m-stat-lbl" data-i18n="mgr_stat_featured">Featured Apps</div>
+        </div>
+        <div class="m-stat-card">
+          <div class="m-stat-val" id="view-mgr-stat-views" style="color: var(--primary-cyan);">0</div>
+          <div class="m-stat-lbl" data-i18n="mgr_stat_views">Views សរុប</div>
+        </div>
+        <div class="m-stat-card">
+          <div class="m-stat-val" id="view-mgr-stat-likes" style="color: var(--accent-pink);">0</div>
+          <div class="m-stat-lbl" data-i18n="mgr_stat_likes">Likes សរុប</div>
+        </div>
+      </div>
+
+      <!-- Search & Category Switcher Controls Bar -->
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 2rem 0 1.2rem 0; flex-wrap: wrap;">
+        <div class="categories-scroll" id="view-mgr-categories-container">
+          <!-- Dynamic Category Switch Buttons: All, APP, Web, Tool -->
+        </div>
+
+        <div class="search-wrapper" style="width: 320px;">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="view-mgr-search-input" class="search-input" placeholder="ស្វែងរកក្នុង Manager Table...">
+        </div>
+      </div>
+
+      <!-- Full-Width Dedicated Manager Data Table -->
+      <div class="manager-table-wrapper">
+        <table class="manager-table">
+          <thead>
+            <tr>
+              <th data-i18n="th_app">Web App</th>
+              <th data-i18n="th_category">Category</th>
+              <th data-i18n="th_stats">Views / Likes</th>
+              <th data-i18n="th_featured">Featured Status</th>
+              <th style="text-align: right;" data-i18n="th_actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="view-manager-table-body">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add New Web App Modal -->
+  <div id="add-app-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" data-i18n="modal_add_title">បន្ថែម Web App ថ្មី</div>
+        <button class="btn-close modal-close-btn"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="add-app-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_name">ឈ្មោះ Web App *</label>
+              <input type="text" id="app-title-input" class="form-control" placeholder="ឧទាហរណ៍: AI Smart Assistant" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_category">ប្រភេទ (Category) *</label>
+              <select id="app-cat-input" class="form-control" required>
+                <option value="APP">APP</option>
+                <option value="Web">Web</option>
+                <option value="Tool">Tool</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="form_app_desc">ការពណ៌នាសង្ខេប (Description) *</label>
+            <textarea id="app-desc-input" class="form-control" placeholder="រៀបរាប់ពីមុខងារសំខាន់ៗរបស់ Web App..." required></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_demo_url">Link ទៅកាន់ Live Web App (URL) *</label>
+              <input type="url" id="app-url-input" class="form-control" placeholder="https://my-app.example.com" required>
+              <div id="app-url-logo-preview" class="url-logo-preview-box" style="display: none;">
+                <img id="app-url-logo-img" src="" alt="Website Logo" class="url-logo-badge" onerror="handleLogoError(this)">
+                <div style="display: flex; flex-direction: column; gap: 3px;">
+                  <span id="app-url-domain-text" class="url-domain-label"></span>
+                  <div class="image-type-toggle-group">
+                    <button type="button" class="img-type-btn active" id="app-type-logo-btn">
+                      🎨 Logo Icon (App/Tool)
+                    </button>
+                    <button type="button" class="img-type-btn" id="app-type-screenshot-btn">
+                      📸 Website Screenshot (Web)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_image_url">Link រូបភាព Screenshot (Image URL)</label>
+              <input type="url" id="app-image-input" class="form-control" placeholder="https://images.unsplash.com/...">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_tags">Tech Stack (ញែកដោយសញ្ញាក្បៀស ,)</label>
+              <input type="text" id="app-tags-input" class="form-control" placeholder="React, Node.js, Tailwind, OpenAi">
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_github">Github Repository Link (បើមាន)</label>
+              <input type="url" id="app-github-input" class="form-control" placeholder="https://github.com/user/repo">
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary modal-close-btn" data-i18n="btn_cancel">បោះបង់</button>
+            <button type="submit" class="btn btn-primary">
+              <i data-lucide="check-circle"></i>
+              <span data-i18n="btn_save_app">រក្សាទុក Web App</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Sandbox & App Details Preview Modal -->
+  <div id="preview-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 1100px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.8rem;">
+          <div id="preview-app-icon" class="logo-icon" style="width: 34px; height: 34px;">
+            <i data-lucide="external-link" style="width: 18px; height: 18px;"></i>
+          </div>
+          <div>
+            <div id="preview-app-title" class="modal-title">App Title</div>
+            <span id="preview-app-cat" class="badge-cat">Category</span>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <a id="preview-direct-link" href="#" target="_blank" class="btn btn-outline-glow btn-sm">
+            <i data-lucide="external-link"></i> <span data-i18n="btn_open_tab">បើកក្នុង Tab ថ្មី</span>
+          </a>
+          <button class="btn-close modal-close-btn"><i data-lucide="x"></i></button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 1.5rem;">
+        <!-- Device Frame Bar -->
+        <div class="sandbox-header">
+          <div class="device-toggles">
+            <button class="device-btn active" data-device="desktop" title="Desktop View"><i data-lucide="monitor"></i> Desktop</button>
+            <button class="device-btn" data-device="tablet" title="Tablet View"><i data-lucide="tablet"></i> Tablet</button>
+            <button class="device-btn" data-device="mobile" title="Mobile View"><i data-lucide="smartphone"></i> Mobile</button>
+          </div>
+          <div style="color: var(--text-muted); font-size: 0.82rem; font-family: var(--font-mono);" id="sandbox-url-display">
+            https://demo-app.com
+          </div>
+        </div>
+
+        <!-- Interactive Frame Wrapper -->
+        <div id="iframe-wrapper" class="iframe-container">
+          <iframe id="sandbox-iframe" src="about:blank" title="Live Preview"></iframe>
+        </div>
+
+        <!-- Extra Details Below Preview -->
+        <div style="margin-top: 1.5rem; background: rgba(255, 255, 255, 0.03); padding: 1.2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-light);">
+          <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--primary-cyan);" data-i18n="about_app">អំពី Web App នេះ</h4>
+          <p id="preview-app-desc" style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;"></p>
+          
+          <div style="margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div id="preview-app-tags" class="tech-stack" style="margin-bottom: 0;"></div>
+            <div id="preview-github-container"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Developer Contact Modal -->
+  <div id="contact-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 550px;">
+      <div class="modal-header">
+        <div class="modal-title" data-i18n="modal_contact_title">ផ្ញើសារមកកាន់ Developer</div>
+        <button class="btn-close modal-close-btn"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="contact-form">
+          <div class="form-group">
+            <label class="form-label" data-i18n="form_your_name">ឈ្មោះរបស់អ្នក</label>
+            <input type="text" class="form-control" placeholder="បញ្ចូលឈ្មោះ..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="form_your_email">អុីមែលរបស់អ្នក</label>
+            <input type="email" class="form-control" placeholder="name@example.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="form_your_msg">សារ (Message)</label>
+            <textarea class="form-control" placeholder="សូមសរសេរសារ ឬសំណើបង្កើត Web App របស់អ្នក..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <i data-lucide="send"></i>
+            <span data-i18n="btn_send_msg">ផ្ញើសារឥឡូវនេះ</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manager Dashboard Modal -->
+  <div id="manager-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 1150px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="logo-icon" style="width: 36px; height: 36px;">
+            <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
+          </div>
+          <div class="modal-title" data-i18n="manager_modal_title">App Manager Dashboard (ផ្ទាំងគ្រប់គ្រង)</div>
+        </div>
+        <button class="btn-close modal-close-btn"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Summary Stats inside Manager -->
+        <div class="manager-stats-grid">
+          <div class="m-stat-card">
+            <div class="m-stat-val" id="mgr-stat-total">0</div>
+            <div class="m-stat-lbl" data-i18n="mgr_stat_total">Web Apps សរុប</div>
+          </div>
+          <div class="m-stat-card">
+            <div class="m-stat-val" id="mgr-stat-featured" style="color: var(--accent-purple);">0</div>
+            <div class="m-stat-lbl" data-i18n="mgr_stat_featured">Featured Apps</div>
+          </div>
+          <div class="m-stat-card">
+            <div class="m-stat-val" id="mgr-stat-views" style="color: var(--primary-cyan);">0</div>
+            <div class="m-stat-lbl" data-i18n="mgr_stat_views">Views សរុប</div>
+          </div>
+          <div class="m-stat-card">
+            <div class="m-stat-val" id="mgr-stat-likes" style="color: var(--accent-pink);">0</div>
+            <div class="m-stat-lbl" data-i18n="mgr_stat_likes">Likes សរុប</div>
+          </div>
+        </div>
+
+        <!-- Manager Controls -->
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap;">
+          <div class="search-wrapper" style="width: 280px;">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="mgr-search-input" class="search-input" placeholder="ស្វែងរកក្នុង Manager...">
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <button id="mgr-add-btn" class="btn btn-primary btn-sm">
+              <i data-lucide="plus"></i> <span data-i18n="btn_add_app">បន្ថែម App ថ្មី</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Table / Cards List -->
+        <div class="manager-table-wrapper">
+          <table class="manager-table">
+            <thead>
+              <tr>
+                <th data-i18n="th_app">Web App</th>
+                <th data-i18n="th_category">Category</th>
+                <th data-i18n="th_stats">Views / Likes</th>
+                <th data-i18n="th_featured">Featured</th>
+                <th style="text-align: right;" data-i18n="th_actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="manager-table-body">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Web App Modal -->
+  <div id="edit-app-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" data-i18n="modal_edit_title">កែប្រែ Web App</div>
+        <button class="btn-close modal-close-btn"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-app-form">
+          <input type="hidden" id="edit-app-id">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_name">ឈ្មោះ Web App *</label>
+              <input type="text" id="edit-title-input" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_category">ប្រភេទ (Category) *</label>
+              <select id="edit-cat-input" class="form-control" required>
+                <option value="APP">APP</option>
+                <option value="Web">Web</option>
+                <option value="Tool">Tool</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="form_app_desc">ការពណ៌នាសង្ខេប (Description) *</label>
+            <textarea id="edit-desc-input" class="form-control" required></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_demo_url">Link ទៅកាន់ Live Web App (URL) *</label>
+              <input type="url" id="edit-url-input" class="form-control" required>
+              <div id="edit-url-logo-preview" class="url-logo-preview-box" style="display: none;">
+                <img id="edit-url-logo-img" src="" alt="Website Logo" class="url-logo-badge" onerror="handleLogoError(this)">
+                <div style="display: flex; flex-direction: column; gap: 3px;">
+                  <span id="edit-url-domain-text" class="url-domain-label"></span>
+                  <div class="image-type-toggle-group">
+                    <button type="button" class="img-type-btn active" id="edit-type-logo-btn">
+                      🎨 Logo Icon (App/Tool)
+                    </button>
+                    <button type="button" class="img-type-btn" id="edit-type-screenshot-btn">
+                      📸 Website Screenshot (Web)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_image_url">Link រូបភាព Screenshot (Image URL)</label>
+              <input type="url" id="edit-image-input" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_tags">Tech Stack (ញែកដោយសញ្ញាក្បៀស ,)</label>
+              <input type="text" id="edit-tags-input" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="form_app_github">Github Repository Link</label>
+              <input type="url" id="edit-github-input" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group" style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem;">
+            <input type="checkbox" id="edit-featured-input" style="width: 18px; height: 18px; accent-color: var(--primary-cyan); cursor: pointer;">
+            <label for="edit-featured-input" style="cursor: pointer; font-weight: 600; color: var(--primary-cyan);">ដាក់ជា Featured App</label>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary modal-close-btn" data-i18n="btn_cancel">បោះបង់</button>
+            <button type="submit" class="btn btn-primary">
+              <i data-lucide="check-circle"></i>
+              <span data-i18n="btn_update_app">ធ្វើបច្ចុប្បន្នភាព App</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="container">
+      <div class="logo-text" style="font-size: 1.2rem; margin-bottom: 0.5rem;">NEXUS<span>.APP</span> SHOWCASE</div>
+      <p style="color: var(--text-dim);">© 2026 Crafted with ❤️ for Next-Level Web Apps. Designed & Developed for Visal Web.</p>
+      <div class="footer-links">
+        <a href="#" id="footer-reset-data">Reset Demo Data</a>
+        <a href="#particle-canvas">Top</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>
