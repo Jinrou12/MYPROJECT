@@ -153,6 +153,8 @@ const DEFAULT_APPS = [
   }
 ];
 
+const DEFAULT_APP_IDS = new Set(DEFAULT_APPS.map(a => a.id));
+
 // --- Translation Dictionary (i18n: Khmer & English) ---
 const TRANSLATIONS = {
   km: {
@@ -500,6 +502,15 @@ function renderManagerTable() {
     return matchesCat && matchesSearch;
   });
 
+  // Keep custom user-added apps prominently at the top of the manager table
+  list.sort((a, b) => {
+    const aCustom = a.id && !DEFAULT_APP_IDS.has(a.id);
+    const bCustom = b.id && !DEFAULT_APP_IDS.has(b.id);
+    if (aCustom && !bCustom) return -1;
+    if (!aCustom && bCustom) return 1;
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
   // Calculate manager stats
   const totalApps = appsData.length;
   const featuredApps = appsData.filter(a => a.featured).length;
@@ -675,77 +686,96 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- Data Operations ---
 function loadAppsData() {
-  const saved = localStorage.getItem("nexus_web_apps_v9") || localStorage.getItem("nexus_web_apps_v8");
-  if (saved) {
+  const keysToScan = [
+    "nexus_web_apps_v9",
+    "nexus_web_apps_v8",
+    "nexus_web_apps_v7",
+    "nexus_web_apps_v6",
+    "nexus_web_apps_v5",
+    "nexus_web_apps_v4",
+    "nexus_web_apps_v3",
+    "nexus_web_apps_v2",
+    "nexus_web_apps"
+  ];
+
+  let primaryList = null;
+  let rescuedCustomApps = [];
+
+  for (const key of keysToScan) {
+    const raw = localStorage.getItem(key);
+    if (!raw) continue;
     try {
-      appsData = JSON.parse(saved);
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        if (!primaryList) {
+          primaryList = parsed;
+        }
+        // Collect custom apps from any version so they never get lost
+        parsed.forEach(item => {
+          if (item && item.id && !DEFAULT_APP_IDS.has(item.id)) {
+            const alreadyExists = rescuedCustomApps.some(c => c.id === item.id || (c.title === item.title && c.url === item.url));
+            if (!alreadyExists) {
+              rescuedCustomApps.push(item);
+            }
+          }
+        });
+      }
     } catch (e) {
-      appsData = [...DEFAULT_APPS];
+      console.warn("Storage parse error on key", key, e);
     }
-  } else {
-    appsData = [...DEFAULT_APPS];
   }
 
-  // Ensure all default apps have their latest official banners, logos, and info
-  DEFAULT_APPS.forEach(defApp => {
-    let app = appsData.find(a => a.id === defApp.id || (a.url && defApp.url && (a.url === defApp.url || a.url.replace(/\/$/, '') === defApp.url.replace(/\/$/, ''))));
-    if (app) {
-      // Sync official banner and logo
-      app.imageUrl = defApp.imageUrl;
-      app.logoUrl = defApp.logoUrl;
-      // Sync title if it has previous typo
-      if (defApp.id === "app-khemvoen" || (app.title && app.title.includes("បង្កង"))) {
-        app.title = defApp.title;
-        app.description = defApp.description;
-        app.descriptionEn = defApp.descriptionEn;
-      }
-      if (defApp.id === "app-3" || (app.title && app.title.includes("Football"))) {
-        app.imageUrl = "images/football_banner.jpg";
-      }
-    } else {
-      // If default app is missing from saved data, add it
-      appsData.push({ ...defApp });
+  let workingList = primaryList || [...DEFAULT_APPS];
+
+  // Merge any rescued custom apps that might not be in primaryList
+  rescuedCustomApps.forEach(customApp => {
+    const exists = workingList.some(a => a.id === customApp.id || (a.title === customApp.title && a.url === customApp.url));
+    if (!exists) {
+      workingList.unshift(customApp);
     }
   });
 
-  // Ensure Jobslak app is configured with proper assets
-  let jobslakApp = appsData.find(a => a.id === "app-jobslak" || (a.url && a.url.includes("jobslak")));
-  const defaultJobslak = DEFAULT_APPS.find(a => a.id === "app-jobslak");
-  
-  if (!jobslakApp && defaultJobslak) {
-    appsData.unshift(defaultJobslak);
-  } else if (jobslakApp && defaultJobslak) {
-    jobslakApp.title = defaultJobslak.title;
-    jobslakApp.description = defaultJobslak.description;
-    jobslakApp.descriptionEn = defaultJobslak.descriptionEn;
-    jobslakApp.tags = defaultJobslak.tags;
-    jobslakApp.imageUrl = "images/jobslak_banner.png";
-    jobslakApp.logoUrl = "images/jobslak_logo.jpg";
-  }
+  // Separate user-added apps from official default apps
+  let userCustomApps = [];
+  let existingDefaultMap = new Map();
 
-  // Ensure Khemvoen Attendance app is configured with logo & banner assets
-  let khemvoenApp = appsData.find(a => a.id === "app-khemvoen" || (a.url && (a.url.includes("khemvoen") || a.url.includes("attenden"))));
-  const defaultKhemvoen = DEFAULT_APPS.find(a => a.id === "app-khemvoen");
-  if (!khemvoenApp && defaultKhemvoen) {
-    appsData.splice(1, 0, defaultKhemvoen);
-  } else if (khemvoenApp && defaultKhemvoen) {
-    khemvoenApp.title = defaultKhemvoen.title;
-    khemvoenApp.description = defaultKhemvoen.description;
-    khemvoenApp.imageUrl = "images/khemvoen_banner.png";
-    khemvoenApp.logoUrl = "images/khemvoen_logo.png";
-  }
+  workingList.forEach(item => {
+    if (!item) return;
+    if (DEFAULT_APP_IDS.has(item.id)) {
+      existingDefaultMap.set(item.id, item);
+    } else {
+      userCustomApps.push(item);
+    }
+  });
 
-  // Ensure Football app is configured with real banner
-  let footballApp = appsData.find(a => a.id === "app-3" || (a.url && a.url.includes("football")));
-  if (footballApp) {
-    footballApp.imageUrl = "images/football_banner.jpg";
-  }
+  // Build official apps ensuring current banners and metadata are preserved
+  const officialApps = DEFAULT_APPS.map(defApp => {
+    const existing = existingDefaultMap.get(defApp.id);
+    if (existing) {
+      return {
+        ...defApp,
+        views: existing.views !== undefined ? existing.views : defApp.views,
+        likes: existing.likes !== undefined ? existing.likes : defApp.likes,
+        featured: existing.featured !== undefined ? existing.featured : defApp.featured,
+        isTesting: existing.isTesting !== undefined ? existing.isTesting : defApp.isTesting,
+        imageUrl: defApp.imageUrl,
+        logoUrl: defApp.logoUrl
+      };
+    }
+    return { ...defApp };
+  });
+
+  // User custom apps stay in front, official apps follow
+  appsData = [...userCustomApps, ...officialApps];
 
   saveAppsData();
 }
 
 function saveAppsData() {
-  localStorage.setItem("nexus_web_apps_v9", JSON.stringify(appsData));
+  const json = JSON.stringify(appsData);
+  localStorage.setItem("nexus_web_apps_v9", json);
+  localStorage.setItem("nexus_web_apps_v8", json);
+  localStorage.setItem("nexus_web_apps", json);
 }
 
 // --- Categories Setup ---
@@ -788,7 +818,14 @@ function renderApps() {
     if (sortBy === "recent") return new Date(b.createdAt) - new Date(a.createdAt);
     if (sortBy === "views") return b.views - a.views;
     if (sortBy === "likes") return b.likes - a.likes;
-    // Featured default
+
+    // Featured default sort:
+    // User custom-added apps always show prominently at the top so user sees what they added
+    const aCustom = a.id && !DEFAULT_APP_IDS.has(a.id);
+    const bCustom = b.id && !DEFAULT_APP_IDS.has(b.id);
+    if (aCustom && !bCustom) return -1;
+    if (!aCustom && bCustom) return 1;
+
     const featuredDiff = (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     if (featuredDiff !== 0) return featuredDiff;
     // Secondary sort: recent
@@ -1194,8 +1231,22 @@ function setupEventListeners() {
     });
   }
 
+  function openAddAppModalWithContext() {
+    const catInput = document.getElementById("app-cat-input");
+    if (catInput) {
+      if (activeCategory && activeCategory !== "All") {
+        catInput.value = activeCategory;
+      } else if (mgrActiveCategory && mgrActiveCategory !== "All") {
+        catInput.value = mgrActiveCategory;
+      } else {
+        catInput.value = "Web";
+      }
+    }
+    openModal(addAppModal);
+  }
+
   // Open Modals
-  if (openAddAppBtn) openAddAppBtn.addEventListener("click", () => openModal(addAppModal));
+  if (openAddAppBtn) openAddAppBtn.addEventListener("click", openAddAppModalWithContext);
   if (openContactBtn) openContactBtn.addEventListener("click", () => openModal(contactModal));
   // View Switcher Buttons
   const navViewShowcase = document.getElementById("nav-view-showcase");
@@ -1222,9 +1273,7 @@ function setupEventListeners() {
   }
 
   if (viewAddAppBtn) {
-    viewAddAppBtn.addEventListener("click", () => {
-      openModal(addAppModal);
-    });
+    viewAddAppBtn.addEventListener("click", openAddAppModalWithContext);
   }
 
   const viewMgrSearchInput = document.getElementById("view-mgr-search-input");
@@ -1253,7 +1302,7 @@ function setupEventListeners() {
   if (mgrAddBtn) {
     mgrAddBtn.addEventListener("click", () => {
       closeModal(managerModal);
-      openModal(addAppModal);
+      openAddAppModalWithContext();
     });
   }
 
@@ -1280,7 +1329,9 @@ function setupEventListeners() {
       if (editTestingCheckbox) app.isTesting = editTestingCheckbox.checked;
 
       saveAppsData();
+      renderCategories();
       renderApps();
+      renderManagerCategories();
       renderManagerTable();
       closeModal(editAppModal);
       showToast(currentLang === 'km' ? "បានធ្វើបច្ចុប្បន្នភាព App ជោគជ័យ!" : "Web App updated successfully!");
@@ -1312,47 +1363,60 @@ function setupEventListeners() {
   // Add App Form Submit
   if (addAppForm) {
     addAppForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+      e.preventDefault();
 
-    const title = document.getElementById("app-title-input").value.trim();
-    const category = document.getElementById("app-cat-input").value;
-    const description = document.getElementById("app-desc-input").value.trim();
-    const url = document.getElementById("app-url-input").value.trim();
-    const imageUrl = document.getElementById("app-image-input").value.trim();
-    const logoUrl = document.getElementById("app-logo-input").value.trim();
-    const tagsRaw = document.getElementById("app-tags-input").value.trim();
-    const githubUrl = document.getElementById("app-github-input").value.trim();
+      const title = document.getElementById("app-title-input").value.trim();
+      const category = document.getElementById("app-cat-input").value;
+      const description = document.getElementById("app-desc-input").value.trim();
+      const url = document.getElementById("app-url-input").value.trim();
+      const imageUrl = document.getElementById("app-image-input").value.trim();
+      const logoUrl = document.getElementById("app-logo-input").value.trim();
+      const tagsRaw = document.getElementById("app-tags-input").value.trim();
+      const githubUrl = document.getElementById("app-github-input").value.trim();
 
-    const tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : ["Web App", category];
+      const tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : ["Web App", category];
 
-    const newApp = {
-      id: "app-" + Date.now(),
-      title,
-      category,
-      description,
-      descriptionEn: description,
-      url,
-      imageUrl: imageUrl || getFaviconUrl(url, 128) || "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800",
-      logoUrl: logoUrl,
-      tags,
-      githubUrl,
-      views: 1,
-      likes: 0,
-      featured: document.getElementById("app-featured-input") ? document.getElementById("app-featured-input").checked : false,
-      isTesting: document.getElementById("app-testing-input") ? document.getElementById("app-testing-input").checked : false,
-      createdAt: new Date().toISOString().split("T")[0]
-    };
+      const newApp = {
+        id: "app-" + Date.now(),
+        title,
+        category,
+        description,
+        descriptionEn: description,
+        url,
+        imageUrl: imageUrl || getFaviconUrl(url, 128) || "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800",
+        logoUrl: logoUrl,
+        tags,
+        githubUrl,
+        views: 1,
+        likes: 0,
+        featured: document.getElementById("app-featured-input") ? document.getElementById("app-featured-input").checked : false,
+        isTesting: document.getElementById("app-testing-input") ? document.getElementById("app-testing-input").checked : false,
+        createdAt: new Date().toISOString().split("T")[0]
+      };
 
-    appsData.unshift(newApp);
-    saveAppsData();
-    updateStats();
-    renderApps();
+      appsData.unshift(newApp);
+      saveAppsData();
 
-    addAppForm.reset();
-    const appUrlPreview = document.getElementById("app-url-logo-preview");
-    if (appUrlPreview) appUrlPreview.style.display = "none";
-    closeModal(addAppModal);
-    showToast(currentLang === 'km' ? "បានបន្ថែម Web App ថ្មីជោគជ័យ!" : "Web App added successfully!");
+      // Reset filters so the newly created app is immediately visible at the top
+      activeCategory = "All";
+      mgrActiveCategory = "All";
+      searchQuery = "";
+      if (searchInput) searchInput.value = "";
+      const viewSearch = document.getElementById("view-mgr-search-input");
+      if (viewSearch) viewSearch.value = "";
+      if (mgrSearchInput) mgrSearchInput.value = "";
+
+      updateStats();
+      renderCategories();
+      renderApps();
+      renderManagerCategories();
+      renderManagerTable();
+
+      addAppForm.reset();
+      const appUrlPreview = document.getElementById("app-url-logo-preview");
+      if (appUrlPreview) appUrlPreview.style.display = "none";
+      closeModal(addAppModal);
+      showToast(currentLang === 'km' ? `បានបន្ថែម Web App "${title}" ជោគជ័យ!` : `Web App "${title}" added successfully!`);
     });
   }
 
