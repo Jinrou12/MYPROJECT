@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6d28d9"/>
+      <stop offset="100%" stop-color="#4c1d95"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+  <!-- Photo frame -->
+  <rect x="80" y="100" width="260" height="200" rx="16" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="4"/>
+  <!-- Mountains in photo -->
+  <polygon points="120,280 200,160 280,280" fill="rgba(255,255,255,0.25)"/>
+  <polygon points="190,280 260,190 330,280" fill="rgba(255,255,255,0.15)"/>
+  <!-- Sun in photo -->
+  <circle cx="300" cy="145" r="28" fill="rgba(251,191,36,0.7)"/>
+  <!-- Eraser/remove tool over logo watermark -->
+  <rect x="170" y="230" width="180" height="50" rx="8" fill="rgba(0,0,0,0.5)"/>
+  <text x="260" y="265" text-anchor="middle" font-family="Arial" font-size="22" fill="rgba(255,255,255,0.7)">WATERMARK</text>
+  <!-- X removal icon -->
+  <circle cx="340" cy="310" r="70" fill="#dc2626"/>
+  <line x1="310" y1="280" x2="370" y2="340" stroke="white" stroke-width="14" stroke-linecap="round"/>
+  <line x1="370" y1="280" x2="310" y2="340" stroke="white" stroke-width="14" stroke-linecap="round"/>
+  <!-- Sparkle AI stars -->
+  <text x="130" y="420" font-size="40" font-family="Arial">✨</text>
+  <text x="80" y="370" font-size="28" font-family="Arial">⭐</text>
+</svg>

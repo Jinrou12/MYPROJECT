@@ -22,10 +22,10 @@ const DEFAULT_APPS = [
   },
   {
     id: "app-khemvoen",
-    title: "ប្រព័ន្ធគ្រប់គ្រងអវត្តមានថ្នាក់បង្កង",
+    title: "ប្រព័ន្ធគ្រប់គ្រងអវត្តមានថ្វាយបង្គំ (វត្តខេមរវ័ន)",
     category: "Web",
-    description: "ប្រព័ន្ធគ្រប់គ្រងអវត្តមាន និងវត្តមានសិស្សថ្នាក់បង្កង (Khemvoen Attendance Management System) សម្រាប់តាមដានវត្តមានប្រចាំថ្ងៃ ប្រចាំខែ និងស្ថិតិស្វ័យប្រវត្តិ ជាមួយប្រព័ន្ធ Dashboard ពណ៌មាសយ៉ាងប្រណីត។",
-    descriptionEn: "Khemvoen Attendance Management System — Advanced student attendance and absence tracking with daily/monthly automated analytics and luxury golden UI.",
+    description: "ប្រព័ន្ធគ្រប់គ្រងអវត្តមាន និងស្រង់វត្តមាន វត្តខេមរវ័ន (បឹងស្នាយ) សម្រាប់តាមដានវត្តមានប្រចាំថ្ងៃ ប្រចាំខែ និងស្ថិតិស្វ័យប្រវត្តិ ជាមួយប្រព័ន្ធ Dashboard ពណ៌មាសយ៉ាងប្រណីត។",
+    descriptionEn: "Khemvoen Pagoda Attendance System — Advanced attendance and absence tracking with daily/monthly automated analytics and luxury golden UI.",
     url: "https://khemvoen-attendance.vercel.app",
     imageUrl: "images/khemvoen_banner.png",
     logoUrl: "images/khemvoen_logo.png",
@@ -43,8 +43,8 @@ const DEFAULT_APPS = [
     description: "Web App សម្រាប់បង្កើត Poster រាប់រយសន្លឹកដោយស្វ័យប្រវត្តិ (Bulk Mail Merge) ជាមួយទិន្នន័យ Excel គាំទ្រពុម្ពអក្សរខ្មែរ និងអាចទាញយកជា ZIP បានយ៉ាងងាយស្រួល។",
     descriptionEn: "Create hundreds of personalized posters in minutes — bulk mail merge with Excel data, Khmer font support, and ZIP export.",
     url: "https://bulk-poster-teal.vercel.app",
-    imageUrl: "https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?q=80&w=800&auto=format&fit=crop",
-    logoUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100' height='100'><rect width='100' height='100' rx='20' fill='%23b91c1c'/><g transform='scale(2.5) translate(8, 8)'><polygon points='12 2 2 7 12 12 22 7 12 2' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><polyline points='2 12 12 17 22 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><polyline points='2 17 12 22 22 17' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></g></svg>",
+    imageUrl: "images/bulkposter_banner.jpg",
+    logoUrl: "images/bulkposter_logo.svg",
     tags: ["React", "HTML Canvas", "Excel Parser", "ZIP Export"],
     githubUrl: "",
     views: 3420,
@@ -59,8 +59,8 @@ const DEFAULT_APPS = [
     description: "Web App សម្រាប់កាត់វីដេអូ (Video Clipper) និងដាក់អក្សរខ្មែរ (Khmer Subtitles) មានភាពងាយស្រួល និងរហ័ស។",
     descriptionEn: "Video clipper and editor with built-in Khmer subtitle support and AI features.",
     url: "https://vdo-to-clip.vercel.app/",
-    imageUrl: "https://images.unsplash.com/photo-1578022761797-b8636ac1773c?q=80&w=800&auto=format&fit=crop",
-    logoUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100' height='100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' font-size='60'>🎬</text></svg>",
+    imageUrl: "images/vdoclip_banner.jpg",
+    logoUrl: "images/vdoclip_logo.svg",
     tags: ["Video Editing", "Khmer Subtitles", "HTML Canvas"],
     githubUrl: "",
     views: 2890,
@@ -92,7 +92,8 @@ const DEFAULT_APPS = [
     description: "កម្មវិធីតាមដានតម្លៃ Cryptocurrencies & Stocks ជាមួយ Price Alerts, Live WebSocket Feeds, និង Portfolio Tracker.",
     descriptionEn: "Live cryptocurrency and equity asset tracker with WebSocket price streaming, technical indicators, and wallet sync.",
     url: "https://example.com/neotrade",
-    imageUrl: "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?q=80&w=800&auto=format&fit=crop",
+    imageUrl: "images/neotrade_banner.jpg",
+    logoUrl: "images/neotrade_logo.svg",
     tags: ["Vue.js", "Web3.js", "TradingView", "API"],
     githubUrl: "https://github.com/visal/neotrade-crypto",
     views: 1950,
@@ -108,8 +109,8 @@ const DEFAULT_APPS = [
     description: "AI-Powered Image & Video Logo Remover សម្រាប់លុប Watermark ឬ Logo ចេញពីរូបភាពនិងវីដេអូដោយស្វ័យប្រវត្តិ។",
     descriptionEn: "AI-Powered Image & Video Logo Remover tool.",
     url: "https://remove-logo.vercel.app/",
-    imageUrl: "https://images.unsplash.com/photo-1616588265050-8b093375815a?q=80&w=800&auto=format&fit=crop",
-    logoUrl: "",
+    imageUrl: "images/logoremove_banner.jpg",
+    logoUrl: "images/logoremove_logo.svg",
     tags: ["AI", "Video Editor", "Tool"],
     githubUrl: "",
     views: 5200,
@@ -124,7 +125,8 @@ const DEFAULT_APPS = [
     description: "ហាងទំនិញអនឡាញទំនើប ជាមួយ Cart System, Dark/Light Mode, Filter ទំនិញលឿន, និង QR Code Payment Integration.",
     descriptionEn: "Ultra-fast headless e-commerce store with dynamic cart state, instant facet filtering, and digital wallet checkout.",
     url: "https://example.com/omni-store",
-    imageUrl: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=800&auto=format&fit=crop",
+    imageUrl: "images/omnistore_banner.jpg",
+    logoUrl: "images/omnistore_logo.svg",
     tags: ["React", "Stripe API", "Redux", "Tailwind"],
     githubUrl: "https://github.com/visal/omni-ecommerce",
     views: 1680,
@@ -139,8 +141,8 @@ const DEFAULT_APPS = [
     description: "កម្មវិធីសម្រាប់ប្ដូរទំហំវីដេអូទៅជា 1920x1080 (Video Converter) ងាយស្រួលប្រើ។",
     descriptionEn: "1920x1080 Video Converter and resizing utility.",
     url: "https://resize-vdo.vercel.app/",
-    imageUrl: "https://images.unsplash.com/photo-1535016120720-40c746a5047b?q=80&w=800&auto=format&fit=crop",
-    logoUrl: "",
+    imageUrl: "images/resizvdo_banner.jpg",
+    logoUrl: "images/resizvdo_logo.svg",
     tags: ["Video Converter", "Tool"],
     githubUrl: "",
     views: 840,
@@ -365,6 +367,62 @@ function handleLogoError(img, customDomain) {
 
 window.handleLogoError = handleLogoError;
 
+// --- Banner Image Error Handler ---
+// Step 1: try thum.io → Step 2: gradient placeholder
+function handleBannerError(img) {
+  if (!img) return;
+
+  const thumUrl = img.dataset.thumUrl || '';
+
+  // Step 1: try thum.io as secondary
+  if (!img.dataset.thumTried && thumUrl) {
+    img.dataset.thumTried = '1';
+    img.onerror = () => handleBannerError(img);
+    img.src = thumUrl;
+    return;
+  }
+
+  // Step 2: gradient placeholder
+  if (img.dataset.bannerFallback) return;
+  img.dataset.bannerFallback = '1';
+  img.onerror = null;
+
+  const title = img.alt || 'App';
+  const initial = title.trim().charAt(0).toUpperCase();
+  const domain = img.dataset.domain || '';
+
+  const gradients = [
+    ['#0f2027', '#203a43', '#2c5364'],
+    ['#1a1a2e', '#16213e', '#0f3460'],
+    ['#200122', '#431B4A', '#a855f7'],
+    ['#0d0d0d', '#1a1a1a', '#00f2fe'],
+    ['#004d40', '#00695c', '#00e676'],
+    ['#b91c1c', '#7f1d1d', '#f87171'],
+  ];
+  let hash = 0;
+  for (let i = 0; i < domain.length; i++) hash += domain.charCodeAt(i);
+  const g = gradients[hash % gradients.length];
+
+  const parent = img.parentElement;
+  if (!parent) return;
+
+  const placeholder = document.createElement('div');
+  placeholder.style.cssText = `
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, ${g[0]} 0%, ${g[1]} 50%, ${g[2]} 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; position: absolute; top: 0; left: 0;
+  `;
+  placeholder.innerHTML = `
+    <div style="font-size: 3rem; font-weight: 800; color: rgba(255,255,255,0.15); font-family: 'Outfit', sans-serif; letter-spacing: 2px;">${initial}</div>
+    <div style="font-size: 0.7rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 3px;">${domain || 'WEB APP'}</div>
+  `;
+  img.style.display = 'none';
+  parent.style.position = 'relative';
+  parent.insertBefore(placeholder, img);
+}
+window.handleBannerError = handleBannerError;
+
 // --- DOM Elements ---
 const appsGrid = document.getElementById("apps-grid");
 const searchInput = document.getElementById("search-input");
@@ -477,7 +535,9 @@ function renderManagerTable() {
     const logoSources = getLogoSources(app.url, 128, app.logoUrl);
     const logoSourcesJson = JSON.stringify(logoSources).replace(/"/g, '&quot;');
     const domain = getDomainName(app.url);
-    const mainImage = app.imageUrl || `https://icon.horse/icon/${domain}`;
+    // Always use stored imageUrl first; external screenshot only if no imageUrl
+    const thumUrl = app.url ? `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(app.url)}` : '';
+    const mainImage = app.imageUrl || thumUrl || `https://icon.horse/icon/${domain}`;
 
     const featuredStar = app.featured 
       ? `<button class="btn btn-secondary btn-icon-sm toggle-featured-btn" data-id="${app.id}" title="Unmark Featured" style="color: var(--accent-amber);"><i data-lucide="star"></i></button>`
@@ -488,7 +548,7 @@ function renderManagerTable() {
         <td>
           <div class="table-app-info">
             <div class="table-app-img-wrapper">
-              <img src="${mainImage}" class="table-app-thumb" alt="${app.title}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
+              <img src="${mainImage}" class="table-app-thumb" alt="${app.title}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" data-thum-url="${thumUrl}" onerror="handleBannerError(this)">
               <img src="${logoSources[0] || ''}" class="table-favicon-badge" alt="${app.title}" title="Logo Website: ${domain}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
             </div>
             <div>
@@ -615,7 +675,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- Data Operations ---
 function loadAppsData() {
-  const saved = localStorage.getItem("nexus_web_apps_v6");
+  const saved = localStorage.getItem("nexus_web_apps_v9") || localStorage.getItem("nexus_web_apps_v8");
   if (saved) {
     try {
       appsData = JSON.parse(saved);
@@ -626,7 +686,29 @@ function loadAppsData() {
     appsData = [...DEFAULT_APPS];
   }
 
-  // Ensure Jobslak app is configured with image 1 as banner and image 2 as logo
+  // Ensure all default apps have their latest official banners, logos, and info
+  DEFAULT_APPS.forEach(defApp => {
+    let app = appsData.find(a => a.id === defApp.id || (a.url && defApp.url && (a.url === defApp.url || a.url.replace(/\/$/, '') === defApp.url.replace(/\/$/, ''))));
+    if (app) {
+      // Sync official banner and logo
+      app.imageUrl = defApp.imageUrl;
+      app.logoUrl = defApp.logoUrl;
+      // Sync title if it has previous typo
+      if (defApp.id === "app-khemvoen" || (app.title && app.title.includes("បង្កង"))) {
+        app.title = defApp.title;
+        app.description = defApp.description;
+        app.descriptionEn = defApp.descriptionEn;
+      }
+      if (defApp.id === "app-3" || (app.title && app.title.includes("Football"))) {
+        app.imageUrl = "images/football_banner.jpg";
+      }
+    } else {
+      // If default app is missing from saved data, add it
+      appsData.push({ ...defApp });
+    }
+  });
+
+  // Ensure Jobslak app is configured with proper assets
   let jobslakApp = appsData.find(a => a.id === "app-jobslak" || (a.url && a.url.includes("jobslak")));
   const defaultJobslak = DEFAULT_APPS.find(a => a.id === "app-jobslak");
   
@@ -648,17 +730,22 @@ function loadAppsData() {
     appsData.splice(1, 0, defaultKhemvoen);
   } else if (khemvoenApp && defaultKhemvoen) {
     khemvoenApp.title = defaultKhemvoen.title;
-    if (!khemvoenApp.imageUrl || khemvoenApp.imageUrl.includes("unsplash")) {
-      khemvoenApp.imageUrl = "images/khemvoen_banner.png";
-    }
+    khemvoenApp.description = defaultKhemvoen.description;
+    khemvoenApp.imageUrl = "images/khemvoen_banner.png";
     khemvoenApp.logoUrl = "images/khemvoen_logo.png";
+  }
+
+  // Ensure Football app is configured with real banner
+  let footballApp = appsData.find(a => a.id === "app-3" || (a.url && a.url.includes("football")));
+  if (footballApp) {
+    footballApp.imageUrl = "images/football_banner.jpg";
   }
 
   saveAppsData();
 }
 
 function saveAppsData() {
-  localStorage.setItem("nexus_web_apps_v6", JSON.stringify(appsData));
+  localStorage.setItem("nexus_web_apps_v9", JSON.stringify(appsData));
 }
 
 // --- Categories Setup ---
@@ -731,13 +818,15 @@ function renderApps() {
     const logoSources = getLogoSources(app.url, 128, app.logoUrl);
     const logoSourcesJson = JSON.stringify(logoSources).replace(/"/g, '&quot;');
     const domain = getDomainName(app.url);
-    const cardImage = app.imageUrl || (logoSources.length > 0 ? logoSources[0] : 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800');
+    // Always use stored imageUrl first; external screenshot only if no imageUrl
+    const thumUrl = app.url ? `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(app.url)}` : '';
+    const cardImage = app.imageUrl || thumUrl || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop';
 
     return `
       <article class="app-card" data-id="${app.id}">
         <div class="app-thumbnail" data-id="${app.id}" style="cursor: pointer; position: relative;" title="Click to open ${app.title}">
           ${testingBadge}
-          <img src="${cardImage}" alt="${app.title}" loading="lazy" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
+          <img src="${cardImage}" alt="${app.title}" loading="lazy" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" data-thum-url="${thumUrl}" onerror="handleBannerError(this)">
           <div class="thumbnail-overlay">
             <span class="badge-cat">${app.category}</span>
           </div>

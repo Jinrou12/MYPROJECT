@@ -560,6 +560,26 @@
     </div>
   </footer>
 
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq4htgDGmUhMLqbz746INKQx7T4AAy1Iw",
+      authDomain: "myproject-c3643.firebaseapp.com",
+      projectId: "myproject-c3643",
+      storageBucket: "myproject-c3643.firebasestorage.app",
+      messagingSenderId: "754924389713",
+      appId: "1:754924389713:web:a034d2f1b802f05037bf70",
+      measurementId: "G-GHT3DXL5EX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    console.log("Firebase has been initialized!");
+  </script>
+
   <!-- Main JavaScript File -->
   <script src="app.js"></script>
 </body>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#134e4a"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+  <!-- Store building -->
+  <rect x="100" y="210" width="312" height="220" rx="10" fill="rgba(255,255,255,0.15)"/>
+  <!-- Roof/awning -->
+  <rect x="80" y="180" width="352" height="50" rx="8" fill="#f59e0b"/>
+  <rect x="80" y="200" width="352" height="12" rx="0" fill="#d97706"/>
+  <!-- OPEN sign -->
+  <rect x="180" y="240" width="152" height="60" rx="8" fill="#166534"/>
+  <text x="256" y="280" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="36" fill="#4ade80">OPEN</text>
+  <!-- Door -->
+  <rect x="210" y="320" width="92" height="110" rx="6" fill="rgba(255,255,255,0.2)"/>
+  <circle cx="295" cy="378" r="7" fill="#f59e0b"/>
+  <!-- Window left -->
+  <rect x="116" y="250" width="55" height="55" rx="5" fill="rgba(255,255,255,0.25)"/>
+  <!-- Window right -->
+  <rect x="341" y="250" width="55" height="55" rx="5" fill="rgba(255,255,255,0.25)"/>
+  <!-- Shopping cart icon bottom -->
+  <circle cx="150" cy="430" r="12" fill="white" opacity="0.6"/>
+  <circle cx="190" cy="430" r="12" fill="white" opacity="0.6"/>
+  <path d="M120,390 L130,390 L145,415 L200,415 L210,395 L140,395" fill="none" stroke="white" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+</svg>
