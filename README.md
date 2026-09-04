@@ -5,7 +5,7 @@ A web application with a storefront and manager dashboard.
 ## Overview
 - **Storefront (`index.html`)**: Interactive customer-facing interface.
 - **Manager Dashboard (`manager.html`)**: Administration and management interface.
-- **Server (`server.js`)**: Lightweight Node.js static file server.
+- **Server (`local-server.js`)**: Lightweight Node.js static file server.
 
 ## Getting Started
 
@@ -14,7 +14,9 @@ A web application with a storefront and manager dashboard.
 
 ### Run the Server
 ```bash
-node server.js
+npm start
+# or
+node local-server.js
 ```
 
 Open your browser at [http://localhost:8080](http://localhost:8080).

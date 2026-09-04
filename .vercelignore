@@ -1,2 +1,2 @@
-# Ignore local Node server from Vercel deployment so it is treated as a pure static site
-server.js
+# Exclude local dev server from deployment
+local-server.js

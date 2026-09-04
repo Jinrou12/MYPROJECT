@@ -1,0 +1,9 @@
+{
+  "name": "nexus-web",
+  "version": "1.0.0",
+  "description": "NEXUS - Web App Showcase & Tech Hub",
+  "scripts": {
+    "start": "node local-server.js",
+    "dev": "node local-server.js"
+  }
+}
