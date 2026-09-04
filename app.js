@@ -622,7 +622,7 @@ function loadAppsData() {
   }
 
   // Ensure Khemvoen Attendance app is configured with logo & banner assets
-  let khemvoenApp = appsData.find(a => a.id === "app-khemvoen" || (a.url && a.url.includes("khemvoen")));
+  let khemvoenApp = appsData.find(a => a.id === "app-khemvoen" || (a.url && (a.url.includes("khemvoen") || a.url.includes("attenden"))));
   const defaultKhemvoen = DEFAULT_APPS.find(a => a.id === "app-khemvoen");
   if (!khemvoenApp && defaultKhemvoen) {
     appsData.splice(1, 0, defaultKhemvoen);
