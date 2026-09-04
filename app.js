@@ -96,6 +96,7 @@ const DEFAULT_APPS = [
     views: 1950,
     likes: 98,
     featured: false,
+    isTesting: true,
     createdAt: "2026-08-24"
   },
   {
@@ -567,6 +568,7 @@ function openEditModal(id) {
   setVal("edit-tags-input", app.tags ? app.tags.join(", ") : "");
   setVal("edit-github-input", app.githubUrl || "");
   setCheck("edit-featured-input", !!app.featured);
+  setCheck("edit-testing-input", !!app.isTesting);
 
   // Trigger live website logo preview
   const editUrlInput = document.getElementById("edit-url-input");
@@ -702,6 +704,7 @@ function renderApps() {
   appsGrid.innerHTML = filtered.map(app => {
     const descriptionText = (currentLang === 'en' && app.descriptionEn) ? app.descriptionEn : app.description;
     const featuredBadge = app.featured ? `<span class="featured-tag">★ Featured</span>` : '';
+    const testingBadge = app.isTesting ? `<span class="testing-tag" style="position: absolute; top: 12px; left: 12px; background: rgba(245, 158, 11, 0.9); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; z-index: 10; border: 1px solid rgba(255, 255, 255, 0.3);"><i data-lucide="flask-conical" style="width: 12px; height: 12px; display: inline-block; vertical-align: -2px; margin-right: 4px;"></i>Beta Test</span>` : '';
     const tagsHtml = app.tags.map(t => `<span class="tech-tag">${t}</span>`).join('');
     const btnPreviewText = TRANSLATIONS[currentLang].btn_preview;
 
@@ -712,7 +715,8 @@ function renderApps() {
 
     return `
       <article class="app-card" data-id="${app.id}">
-        <div class="app-thumbnail" data-id="${app.id}" style="cursor: pointer;" title="Click to open ${app.title}">
+        <div class="app-thumbnail" data-id="${app.id}" style="cursor: pointer; position: relative;" title="Click to open ${app.title}">
+          ${testingBadge}
           <img src="${cardImage}" alt="${app.title}" loading="lazy" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
           <div class="thumbnail-overlay">
             <span class="badge-cat">${app.category}</span>
@@ -1163,6 +1167,8 @@ function setupEventListeners() {
       app.tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : app.tags;
       app.githubUrl = document.getElementById("edit-github-input").value.trim();
       app.featured = document.getElementById("edit-featured-input").checked;
+      const editTestingCheckbox = document.getElementById("edit-testing-input");
+      if (editTestingCheckbox) app.isTesting = editTestingCheckbox.checked;
 
       saveAppsData();
       renderApps();
@@ -1223,7 +1229,8 @@ function setupEventListeners() {
       githubUrl,
       views: 1,
       likes: 0,
-      featured: false,
+      featured: document.getElementById("app-featured-input") ? document.getElementById("app-featured-input").checked : false,
+      isTesting: document.getElementById("app-testing-input") ? document.getElementById("app-testing-input").checked : false,
       createdAt: new Date().toISOString().split("T")[0]
     };
 
