@@ -22,18 +22,18 @@ const DEFAULT_APPS = [
   },
   {
     id: "app-1",
-    title: "AI Matrix Generator & Image Studio",
+    title: "Bulk Poster Generator",
     category: "Tool",
-    description: "Web App សម្រាប់បង្កើត និងកែច្នៃរូបភាពជាមួយ AI (Generative Art) មាន Prompt Generator ស្វ័យប្រវត្តិ និង AI Upscaling.",
-    descriptionEn: "Next-gen AI Image generation & prompt refinement studio with real-time style transfers and high-res upscaling.",
-    url: "https://example.com/ai-studio",
-    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop",
-    tags: ["React", "AI API", "Tailwind", "Canvas"],
-    githubUrl: "https://github.com/visal/ai-matrix-studio",
+    description: "Web App សម្រាប់បង្កើត Poster រាប់រយសន្លឹកដោយស្វ័យប្រវត្តិ (Bulk Mail Merge) ជាមួយទិន្នន័យ Excel គាំទ្រពុម្ពអក្សរខ្មែរ និងអាចទាញយកជា ZIP បានយ៉ាងងាយស្រួល។",
+    descriptionEn: "Create hundreds of personalized posters in minutes — bulk mail merge with Excel data, Khmer font support, and ZIP export.",
+    url: "https://bulk-poster-teal.vercel.app",
+    imageUrl: "https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?q=80&w=800&auto=format&fit=crop",
+    tags: ["React", "HTML Canvas", "Excel Parser", "ZIP Export"],
+    githubUrl: "",
     views: 3420,
     likes: 184,
     featured: true,
-    createdAt: "2026-08-20"
+    createdAt: "2026-09-04"
   },
   {
     id: "app-2",
