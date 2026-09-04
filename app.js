@@ -1308,6 +1308,16 @@ function updateStats() {
   if (statTotalApps) {
     statTotalApps.textContent = appsData.length;
   }
+  const statViews = document.getElementById("stat-total-views");
+  if (statViews) {
+    let totalViews = appsData.reduce((sum, app) => sum + (app.views || 0), 0);
+    statViews.textContent = totalViews >= 1000 ? (totalViews / 1000).toFixed(1) + 'K' : totalViews;
+  }
+  const statCategories = document.getElementById("stat-categories");
+  if (statCategories) {
+    let uniqueCategories = new Set(appsData.map(app => app.category));
+    statCategories.textContent = uniqueCategories.size;
+  }
 }
 
 // --- Language Switcher Logic ---
