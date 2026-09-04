@@ -615,7 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- Data Operations ---
 function loadAppsData() {
-  const saved = localStorage.getItem("nexus_web_apps_v5");
+  const saved = localStorage.getItem("nexus_web_apps_v6");
   if (saved) {
     try {
       appsData = JSON.parse(saved);
@@ -658,7 +658,7 @@ function loadAppsData() {
 }
 
 function saveAppsData() {
-  localStorage.setItem("nexus_web_apps_v5", JSON.stringify(appsData));
+  localStorage.setItem("nexus_web_apps_v6", JSON.stringify(appsData));
 }
 
 // --- Categories Setup ---
