@@ -359,73 +359,110 @@ function resolveKnownAppBanner(url = "", title = "") {
   return "";
 }
 
+// --- Smart Vector SVG Icon Generator (High-def, themed by title/domain) ---
+function generateSmartLogoSvg(title = '', domain = '') {
+  const str = ((title || '') + ' ' + (domain || '')).toLowerCase();
+  let iconSvg = '';
+  let grad = ['#00f2fe', '#4facfe'];
+
+  if (str.includes('audio') || str.includes('sound') || str.includes('music') || str.includes('voice') || str.includes('speech') || str.includes('tts')) {
+    grad = ['#ec4899', '#8b5cf6'];
+    iconSvg = `<path d="M3 18v-6a9 9 0 0 1 18 0v6" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" fill="white"/>`;
+  } else if (str.includes('video') || str.includes('vdo') || str.includes('clip') || str.includes('movie')) {
+    grad = ['#8b5cf6', '#3b82f6'];
+    iconSvg = `<rect x="2" y="4" width="20" height="16" rx="4" fill="none" stroke="white" stroke-width="2.5"/><polygon points="10 8 16 12 10 16 10 8" fill="white"/>`;
+  } else if (str.includes('image') || str.includes('photo') || str.includes('color') || str.includes('chroma') || str.includes('pic')) {
+    grad = ['#f59e0b', '#ef4444'];
+    iconSvg = `<rect width="18" height="18" x="3" y="3" rx="2" fill="none" stroke="white" stroke-width="2.5"/><circle cx="9" cy="9" r="2" fill="white"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>`;
+  } else if (str.includes('post') || str.includes('bulk') || str.includes('mail') || str.includes('send')) {
+    grad = ['#10b981', '#06b6d4'];
+    iconSvg = `<polygon points="12 2 2 7 12 12 22 7 12 2" fill="none" stroke="white" stroke-width="2.5"/><polyline points="2 17 12 22 22 17" fill="none" stroke="white" stroke-width="2.5"/><polyline points="2 12 12 17 22 12" fill="none" stroke="white" stroke-width="2.5"/>`;
+  } else if (str.includes('map') || str.includes('location') || str.includes('tag')) {
+    grad = ['#06b6d4', '#3b82f6'];
+    iconSvg = `<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" fill="none" stroke="white" stroke-width="2.5"/><circle cx="12" cy="10" r="3" fill="white"/>`;
+  } else if (str.includes('attend') || str.includes('student') || str.includes('school') || str.includes('វត្តមាន')) {
+    grad = ['#f59e0b', '#d97706'];
+    iconSvg = `<path d="M22 10v6M2 10l10-5 10 5-10 5z" fill="none" stroke="white" stroke-width="2.5"/><path d="M6 12v5c3 3 9 3 12 0v-5" fill="none" stroke="white" stroke-width="2.5"/>`;
+  } else if (str.includes('crypto') || str.includes('trade') || str.includes('stock')) {
+    grad = ['#10b981', '#3b82f6'];
+    iconSvg = `<polyline points="22 7 13.5 15.5 8.5 10.5 2 17" fill="none" stroke="white" stroke-width="2.5"/><polyline points="16 7 22 7 22 13" fill="none" stroke="white" stroke-width="2.5"/>`;
+  } else {
+    const initial = (title || domain || 'W').trim().charAt(0).toUpperCase();
+    return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${encodeURIComponent(grad[0])}"/><stop offset="100%" stop-color="${encodeURIComponent(grad[1])}"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(%23g)"/><text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="sans-serif" font-weight="800" font-size="32">${initial}</text></svg>`;
+  }
+
+  return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${encodeURIComponent(grad[0])}"/><stop offset="100%" stop-color="${encodeURIComponent(grad[1])}"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(%23g)"/><g transform="translate(3,3) scale(0.75)">${iconSvg}</g></svg>`;
+}
+
+// --- High-Resolution Real Live Screenshot Engine ---
+function getWebsiteScreenshotSources(url) {
+  if (!url || typeof url !== 'string') return [];
+  let cleanUrl = url.trim();
+  if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+    cleanUrl = 'https://' + cleanUrl;
+  }
+  return [
+    `https://mini.s-shot.ru/800x500/PNG/800/Z100/?${cleanUrl}`,
+    `https://api.microlink.io/?url=${encodeURIComponent(cleanUrl)}&screenshot=true&meta=false&embed=screenshot.url`,
+    `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=800&h=500`
+  ];
+}
+
 // --- Website Logo & Favicon Extraction Helpers ---
 function getLogoSources(url, size = 256, customLogoUrl = null, title = null) {
-  if (!url || typeof url !== 'string') return customLogoUrl ? [customLogoUrl] : ['images/jobslak_logo.jpg'];
+  if (!url || typeof url !== 'string') {
+    const fallback = generateSmartLogoSvg(title || '', 'app');
+    return customLogoUrl ? [customLogoUrl, fallback] : [fallback];
+  }
   try {
     let cleanUrl = url.trim();
     if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
       cleanUrl = 'https://' + cleanUrl;
     }
     const domain = new URL(cleanUrl).hostname;
-    if (!domain) return customLogoUrl ? [customLogoUrl] : ['images/jobslak_logo.jpg'];
+    const smartLogo = generateSmartLogoSvg(title || '', domain || '');
+    if (!domain) return customLogoUrl ? [customLogoUrl, smartLogo] : [smartLogo];
 
     const sources = [];
 
-    // 1. Explicit Custom Logo URL (highest user priority if valid)
+    // 1. Explicit Custom Logo URL (highest user priority)
     if (customLogoUrl && typeof customLogoUrl === 'string' && customLogoUrl.trim() !== '') {
       const trimmedLogo = customLogoUrl.trim();
-      if (!sources.includes(trimmedLogo)) {
-        sources.push(trimmedLogo);
-      }
+      if (!sources.includes(trimmedLogo)) sources.push(trimmedLogo);
     }
 
-    // 2. High-precision known authentic app logo detection (matches URL & Title)
+    // 2. High-precision known authentic app logo catalog match
     const knownLogo = resolveKnownAppLogo(cleanUrl, title || '');
-    if (knownLogo && !sources.includes(knownLogo)) {
-      sources.push(knownLogo);
-    }
+    if (knownLogo && !sources.includes(knownLogo)) sources.push(knownLogo);
 
-    // 3. Google High-Resolution Favicon CDN (256px / 128px) - Highly reliable, genuine site icon, zero CORS issues
-    const googleFavicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=${size >= 128 ? 256 : 128}`;
-    if (!sources.includes(googleFavicon)) {
-      sources.push(googleFavicon);
-    }
-
-    // 4. Clearbit Logo API - Crisp corporate / platform logos
-    const clearbitLogo = `https://logo.clearbit.com/${domain}`;
-    if (!sources.includes(clearbitLogo)) {
-      sources.push(clearbitLogo);
-    }
-
-    // 5. IconHorse Favicon Extractor API
-    const iconHorse = `https://icon.horse/icon/${domain}`;
-    if (!sources.includes(iconHorse)) {
-      sources.push(iconHorse);
-    }
-
-    // 6. DuckDuckGo Favicon Service
-    const ddgFavicon = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
-    if (!sources.includes(ddgFavicon)) {
-      sources.push(ddgFavicon);
-    }
-
-    // 7. Domain direct assets (fallbacks)
+    // 3. Direct domain assets
     sources.push(
       `https://${domain}/favicon.ico`,
       `https://${domain}/favicon.png`,
       `https://${domain}/apple-touch-icon.png`
     );
 
+    // 4. Google Favicon CDN
+    sources.push(
+      `https://www.google.com/s2/favicons?domain=${cleanUrl}&sz=${size >= 128 ? 256 : 128}`,
+      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
+    );
+
+    // 5. IconHorse Favicon Extractor API
+    sources.push(`https://icon.horse/icon/${domain}`);
+
+    // 6. Smart Themed Vector SVG Logo (100% reliable fallback)
+    sources.push(smartLogo);
+
     return sources;
   } catch (e) {
-    const known = resolveKnownAppLogo(url, title || '');
-    return known ? [known] : (customLogoUrl ? [customLogoUrl] : ['images/jobslak_logo.jpg']);
+    const smartLogo = generateSmartLogoSvg(title || '', url || '');
+    return [smartLogo];
   }
 }
 
-function getFaviconUrl(url, size = 128) {
-  const sources = getLogoSources(url, size);
+function getFaviconUrl(url, size = 128, title = '') {
+  const sources = getLogoSources(url, size, null, title);
   return sources.length > 0 ? sources[0] : '';
 }
 
@@ -459,78 +496,60 @@ function handleLogoError(img, customDomain) {
     if (img.dataset) img.dataset.sourceIdx = currentIndex;
     img.src = sources[currentIndex];
   } else {
-    // Generate dynamic colorful SVG Monogram badge
-    const titleText = img.alt || domain || 'W';
-    const initial = titleText.trim().charAt(0).toUpperCase();
-    
-    const colors = [
-      ['%234f46e5', '%23818cf8'], // Indigo
-      ['%23b91c1c', '%23f87171'], // Red
-      ['%230f766e', '%232dd4bf'], // Teal
-      ['%23b45309', '%23fbbf24'], // Amber
-      ['%237e22ce', '%23c084fc'], // Purple
-      ['%23be185d', '%23f472b6']  // Pink
-    ];
-    let hash = 0;
-    for (let i = 0; i < domain.length; i++) hash += domain.charCodeAt(i);
-    const colorPair = colors[hash % colors.length];
-    
-    img.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><defs><linearGradient id="grad" x1="0%25" y1="0%25" x2="100%25" y2="100%25"><stop offset="0%25" stop-color="${colorPair[0]}" /><stop offset="100%25" stop-color="${colorPair[1]}" /></linearGradient></defs><rect width="128" height="128" rx="28" fill="url(%23grad)"/><text x="50%25" y="58%25" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="sans-serif" font-weight="bold" font-size="64">${initial}</text></svg>`;
+    const titleText = img.alt || domain || 'Web App';
+    img.src = generateSmartLogoSvg(titleText, domain);
     img.onerror = null;
   }
 }
 
 window.handleLogoError = handleLogoError;
 
-// --- Banner Image Error Handler ---
-// Step 1: try thum.io → Step 2: gradient placeholder
+// --- Banner Image Error Handler with Multi-Provider Auto-Fallback ---
 function handleBannerError(img) {
   if (!img) return;
 
-  const thumUrl = img.dataset.thumUrl || '';
+  let sources = [];
+  try {
+    sources = img.dataset && img.dataset.bannerSources ? JSON.parse(img.dataset.bannerSources) : [];
+  } catch (e) {
+    sources = [];
+  }
 
-  // Step 1: try thum.io as secondary
-  if (!img.dataset.thumTried && thumUrl) {
-    img.dataset.thumTried = '1';
-    img.onerror = () => handleBannerError(img);
-    img.src = thumUrl;
+  let currentIndex = parseInt((img.dataset && img.dataset.bannerSourceIdx) || '0', 10);
+  currentIndex++;
+
+  if (sources.length > 0 && currentIndex < sources.length) {
+    if (img.dataset) img.dataset.bannerSourceIdx = currentIndex;
+    img.src = sources[currentIndex];
     return;
   }
 
-  // Step 2: gradient placeholder
+  // Fallback: render futuristic live browser mockup frame
   if (img.dataset.bannerFallback) return;
   img.dataset.bannerFallback = '1';
   img.onerror = null;
 
-  const title = img.alt || 'App';
-  const initial = title.trim().charAt(0).toUpperCase();
+  const title = img.alt || 'Live Web App';
   const domain = img.dataset.domain || '';
-
-  const gradients = [
-    ['#0f2027', '#203a43', '#2c5364'],
-    ['#1a1a2e', '#16213e', '#0f3460'],
-    ['#200122', '#431B4A', '#a855f7'],
-    ['#0d0d0d', '#1a1a1a', '#00f2fe'],
-    ['#004d40', '#00695c', '#00e676'],
-    ['#b91c1c', '#7f1d1d', '#f87171'],
-  ];
-  let hash = 0;
-  for (let i = 0; i < domain.length; i++) hash += domain.charCodeAt(i);
-  const g = gradients[hash % gradients.length];
+  const initial = title.trim().charAt(0).toUpperCase();
 
   const parent = img.parentElement;
   if (!parent) return;
 
   const placeholder = document.createElement('div');
-  placeholder.style.cssText = `
-    width: 100%; height: 100%;
-    background: linear-gradient(135deg, ${g[0]} 0%, ${g[1]} 50%, ${g[2]} 100%);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 8px; position: absolute; top: 0; left: 0;
-  `;
+  placeholder.className = 'custom-banner-mockup';
   placeholder.innerHTML = `
-    <div style="font-size: 3rem; font-weight: 800; color: rgba(255,255,255,0.15); font-family: 'Outfit', sans-serif; letter-spacing: 2px;">${initial}</div>
-    <div style="font-size: 0.7rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 3px;">${domain || 'WEB APP'}</div>
+    <div class="mockup-browser-bar">
+      <span class="mockup-dot red"></span>
+      <span class="mockup-dot yellow"></span>
+      <span class="mockup-dot green"></span>
+      <span class="mockup-domain-pill">${domain || 'app.vercel.app'}</span>
+    </div>
+    <div class="mockup-content">
+      <div class="mockup-icon">${initial}</div>
+      <div class="mockup-title">${title}</div>
+      <div class="mockup-badge">✦ LIVE WEB APP</div>
+    </div>
   `;
   img.style.display = 'none';
   parent.style.position = 'relative';
@@ -659,9 +678,12 @@ function renderManagerTable() {
     const logoSources = getLogoSources(app.url, 128, app.logoUrl, app.title);
     const logoSourcesJson = JSON.stringify(logoSources).replace(/"/g, '&quot;');
     const domain = getDomainName(app.url);
-    // Always use stored imageUrl first; external screenshot only if no imageUrl
-    const thumUrl = app.url ? `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(app.url)}` : '';
-    const mainImage = app.imageUrl || thumUrl || `https://icon.horse/icon/${domain}`;
+    const screenshotSources = getWebsiteScreenshotSources(app.url);
+    const customBanner = (app.imageUrl && !app.imageUrl.includes('thum.io') && !app.imageUrl.includes('unsplash.com')) ? app.imageUrl : null;
+    const knownBanner = resolveKnownAppBanner(app.url, app.title);
+    const bannerSources = [customBanner, knownBanner, ...screenshotSources].filter(Boolean).filter((u, idx, arr) => arr.indexOf(u) === idx);
+    const bannerSourcesJson = JSON.stringify(bannerSources).replace(/"/g, '&quot;');
+    const mainImage = bannerSources[0] || 'images/jobslak_banner.png';
 
     const featuredStar = app.featured 
       ? `<button class="btn btn-secondary btn-icon-sm toggle-featured-btn" data-id="${app.id}" title="Unmark Featured" style="color: var(--accent-amber);"><i data-lucide="star"></i></button>`
@@ -672,7 +694,7 @@ function renderManagerTable() {
         <td>
           <div class="table-app-info">
             <div class="table-app-img-wrapper">
-              <img src="${mainImage}" class="table-app-thumb" alt="${app.title}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" data-thum-url="${thumUrl}" onerror="handleBannerError(this)">
+              <img src="${mainImage}" class="table-app-thumb" alt="${app.title}" data-domain="${domain}" data-banner-sources="${bannerSourcesJson}" data-banner-source-idx="0" onerror="handleBannerError(this)">
               <img src="${logoSources[0] || ''}" class="table-favicon-badge" alt="${app.title}" title="Logo Website: ${domain}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
             </div>
             <div>
@@ -863,26 +885,27 @@ function loadAppsData() {
 
   // Ensure user custom apps have authentic real logos and banners if known
   userCustomApps = userCustomApps.map(item => {
-    const cleanUrl = item.url || '';
+    let cleanUrl = item.url || '';
+    if (cleanUrl && !cleanUrl.startsWith('http')) cleanUrl = 'https://' + cleanUrl;
     const cleanTitle = item.title || '';
     const resolvedLogo = resolveKnownAppLogo(cleanUrl, cleanTitle);
     const resolvedBanner = resolveKnownAppBanner(cleanUrl, cleanTitle);
     const domain = getDomainName(cleanUrl);
+    const screenSources = getWebsiteScreenshotSources(cleanUrl);
 
     let logoUrl = item.logoUrl;
     if (resolvedLogo) {
       logoUrl = resolvedLogo;
     } else if (!logoUrl || logoUrl.trim() === '') {
-      if (domain) {
-        logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=256`;
-      }
+      const defaultLogoSources = getLogoSources(cleanUrl, 256, null, cleanTitle);
+      logoUrl = defaultLogoSources[0] || generateSmartLogoSvg(cleanTitle, domain);
     }
 
     let imageUrl = item.imageUrl;
     if (resolvedBanner) {
       imageUrl = resolvedBanner;
-    } else if (!imageUrl || imageUrl.includes('unsplash.com')) {
-      imageUrl = cleanUrl ? `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(cleanUrl)}` : '';
+    } else if (!imageUrl || imageUrl.includes('thum.io') || imageUrl.includes('unsplash.com')) {
+      imageUrl = screenSources[0] || (cleanUrl ? `https://mini.s-shot.ru/800x500/PNG/800/Z100/?${cleanUrl}` : '');
     }
 
     return {
@@ -994,15 +1017,18 @@ function renderApps() {
     const logoSources = getLogoSources(app.url, 128, app.logoUrl, app.title);
     const logoSourcesJson = JSON.stringify(logoSources).replace(/"/g, '&quot;');
     const domain = getDomainName(app.url);
-    // Always use stored imageUrl first; external screenshot only if no imageUrl
-    const thumUrl = app.url ? `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(app.url)}` : '';
-    const cardImage = app.imageUrl || thumUrl || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop';
+    const screenshotSources = getWebsiteScreenshotSources(app.url);
+    const customBanner = (app.imageUrl && !app.imageUrl.includes('thum.io') && !app.imageUrl.includes('unsplash.com')) ? app.imageUrl : null;
+    const knownBanner = resolveKnownAppBanner(app.url, app.title);
+    const bannerSources = [customBanner, knownBanner, ...screenshotSources].filter(Boolean).filter((u, idx, arr) => arr.indexOf(u) === idx);
+    const bannerSourcesJson = JSON.stringify(bannerSources).replace(/"/g, '&quot;');
+    const cardImage = bannerSources[0] || (app.url ? screenshotSources[0] : 'images/resizvdo_banner.jpg');
 
     return `
       <article class="app-card" data-id="${app.id}">
         <div class="app-thumbnail" data-id="${app.id}" style="cursor: pointer; position: relative;" title="Click to open ${app.title}">
           ${testingBadge}
-          <img src="${cardImage}" alt="${app.title}" loading="lazy" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" data-thum-url="${thumUrl}" onerror="handleBannerError(this)">
+          <img src="${cardImage}" alt="${app.title}" loading="lazy" data-domain="${domain}" data-banner-sources="${bannerSourcesJson}" data-banner-source-idx="0" onerror="handleBannerError(this)">
           <div class="thumbnail-overlay">
             <span class="badge-cat">${app.category}</span>
           </div>
@@ -1300,15 +1326,17 @@ function setupUrlLogoListeners() {
 
       const titleVal = titleInput ? titleInput.value.trim() : '';
       const customLogoVal = logoInput ? logoInput.value.trim() : null;
-      const sources = getLogoSources(val, 256, customLogoVal, titleVal);
       const cleanUrl = val.startsWith('http') ? val : 'https://' + val;
       const knownBanner = resolveKnownAppBanner(cleanUrl, titleVal);
-      const screenshotUrl = knownBanner || `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(cleanUrl)}`;
+      const screenshotSources = getWebsiteScreenshotSources(cleanUrl);
+      const screenshotUrl = knownBanner || screenshotSources[0] || '';
+
+      const sources = getLogoSources(val, 256, customLogoVal, titleVal);
 
       // Primary detected real logo
       const primaryLogo = (customLogoVal && customLogoVal !== '') 
         ? customLogoVal 
-        : (sources.length > 0 ? sources[0] : `https://www.google.com/s2/favicons?domain=${domain}&sz=256`);
+        : (sources.length > 0 ? sources[0] : generateSmartLogoSvg(titleVal, domain));
 
       // Automatically fill logo input if empty or manually requested
       if (logoInput && (!logoInput.value.trim() || isManual)) {
@@ -1327,8 +1355,8 @@ function setupUrlLogoListeners() {
         candidates.push({ label: "Official Logo", url: known });
       }
       candidates.push(
-        { label: "Google 256px", url: `https://www.google.com/s2/favicons?domain=${domain}&sz=256` },
-        { label: "Clearbit", url: `https://logo.clearbit.com/${domain}` },
+        { label: "Smart Icon", url: generateSmartLogoSvg(titleVal, domain) },
+        { label: "Google 256px", url: `https://www.google.com/s2/favicons?domain=${cleanUrl}&sz=256` },
         { label: "IconHorse", url: `https://icon.horse/icon/${domain}` }
       );
       renderCandidates(candidates, logoInput ? logoInput.value.trim() : primaryLogo);
@@ -1373,8 +1401,39 @@ function setupUrlLogoListeners() {
     });
 
     if (btnFetch) {
-      btnFetch.addEventListener("click", () => {
+      btnFetch.addEventListener("click", async () => {
         btnFetch.classList.add("loading");
+        const val = input.value.trim();
+        const cleanUrl = val.startsWith('http') ? val : 'https://' + val;
+        const domain = getDomainName(val);
+
+        if (domain) {
+          try {
+            const res = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(cleanUrl)}`);
+            if (res.ok) {
+              const resJson = await res.json();
+              const data = resJson && resJson.data;
+              if (data) {
+                if (titleInput && (!titleInput.value.trim() || titleInput.value.includes('App') || titleInput.value.includes('Web'))) {
+                  if (data.title) titleInput.value = data.title;
+                }
+                const descInput = document.getElementById(cfg.inputId.includes('edit') ? 'edit-desc-input' : 'app-desc-input');
+                if (descInput && (!descInput.value.trim() || descInput.value.length < 10) && data.description) {
+                  descInput.value = data.description;
+                }
+                if (logoInput && data.logo && data.logo.url) {
+                  logoInput.value = data.logo.url;
+                }
+                if (targetImageInput && data.image && data.image.url) {
+                  targetImageInput.value = data.image.url;
+                }
+              }
+            }
+          } catch (e) {
+            console.warn("Live metadata fetch error:", e);
+          }
+        }
+
         autoSelectModeFromCat();
         applySelectedImage(true);
         setTimeout(() => {
@@ -1553,15 +1612,16 @@ function setupEventListeners() {
       const editTitle = document.getElementById("edit-title-input").value.trim();
       const knownLogo = resolveKnownAppLogo(editUrl, editTitle);
       const knownBanner = resolveKnownAppBanner(editUrl, editTitle);
+      const screenSources = getWebsiteScreenshotSources(editUrl);
+      const defaultLogoSources = getLogoSources(editUrl, 256, null, editTitle);
 
       app.title = editTitle;
       app.category = document.getElementById("edit-cat-input").value;
       app.description = document.getElementById("edit-desc-input").value.trim();
       app.url = editUrl;
-      const editDomain = getDomainName(editUrl);
-      const autoEditLogo = editDomain ? `https://www.google.com/s2/favicons?domain=${editDomain}&sz=256` : '';
-      app.imageUrl = document.getElementById("edit-image-input").value.trim() || knownBanner || app.imageUrl;
-      app.logoUrl = document.getElementById("edit-logo-input").value.trim() || knownLogo || autoEditLogo || app.logoUrl;
+      const customImg = document.getElementById("edit-image-input").value.trim();
+      app.imageUrl = (customImg && !customImg.includes('thum.io')) ? customImg : (knownBanner || screenSources[0] || app.imageUrl);
+      app.logoUrl = document.getElementById("edit-logo-input").value.trim() || knownLogo || defaultLogoSources[0] || app.logoUrl;
       
       const tagsRaw = document.getElementById("edit-tags-input").value.trim();
       app.tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : app.tags;
@@ -1620,12 +1680,12 @@ function setupEventListeners() {
 
       const knownLogo = resolveKnownAppLogo(url, title);
       const knownBanner = resolveKnownAppBanner(url, title);
+      const screenSources = getWebsiteScreenshotSources(url);
+      const defaultLogoSources = getLogoSources(url, 256, null, title);
 
-      const addDomain = getDomainName(url);
-      const autoAddLogo = addDomain ? `https://www.google.com/s2/favicons?domain=${addDomain}&sz=256` : '';
-
-      const resolvedLogoUrl = logoUrl || knownLogo || autoAddLogo || '';
-      const resolvedImageUrl = imageUrl || knownBanner || (url ? `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(url)}` : '') || 'images/resizvdo_banner.jpg';
+      const customImg = imageUrl.trim();
+      const resolvedImageUrl = (customImg && !customImg.includes('thum.io')) ? customImg : (knownBanner || screenSources[0] || 'images/resizvdo_banner.jpg');
+      const resolvedLogoUrl = logoUrl.trim() || knownLogo || defaultLogoSources[0] || '';
 
       const newApp = {
         id: "app-" + Date.now(),
