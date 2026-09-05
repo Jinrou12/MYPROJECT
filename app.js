@@ -223,7 +223,9 @@ const TRANSLATIONS = {
     th_featured: "Featured",
     th_actions: "Actions",
     modal_edit_title: "កែប្រែ Web App",
-    btn_update_app: "ធ្វើបច្ចុប្បន្នភាព App"
+    btn_update_app: "ធ្វើបច្ចុប្បន្នភាព App",
+    btn_fetch_logo: "ទាញយក Logo & Info",
+    logo_verified: "Logo ពិតប្រាកដ"
   },
   en: {
     search_placeholder: "Search Web Apps or Tech Stack...",
@@ -275,7 +277,9 @@ const TRANSLATIONS = {
     th_featured: "Featured",
     th_actions: "Actions",
     modal_edit_title: "Edit Web App",
-    btn_update_app: "Update App"
+    btn_update_app: "Update App",
+    btn_fetch_logo: "Fetch Logo & Info",
+    logo_verified: "Authentic Logo"
   }
 };
 
@@ -290,6 +294,8 @@ let sortBy = "featured";
 // --- Known Real Web Apps Logo & Banner Catalog ---
 function resolveKnownAppLogo(url = "", title = "") {
   const str = ((url || "") + " " + (title || "")).toLowerCase();
+  
+  // User's own showcase apps
   if (str.includes("resize-vdo") || str.includes("resizvdo")) return "images/resizvdo_logo.svg";
   if (str.includes("football")) return "images/football_logo.svg";
   if (str.includes("remove-logo") || str.includes("logoremove")) return "images/logoremove_logo.svg";
@@ -300,6 +306,41 @@ function resolveKnownAppLogo(url = "", title = "") {
   if (str.includes("jobslak") || str.includes("ស្លាកលេខ") || str.includes("tag & location")) return "images/jobslak_logo.jpg";
   if (str.includes("neotrade")) return "images/neotrade_logo.svg";
   if (str.includes("omni")) return "images/omnistore_logo.svg";
+
+  // Major popular websites & apps (guarantees real high-res SVG / official logos)
+  if (str.includes("facebook.com") || str.includes("fb.com") || str.includes("facebook")) {
+    return "https://www.google.com/s2/favicons?domain=facebook.com&sz=256";
+  }
+  if (str.includes("youtube.com") || str.includes("youtu.be")) {
+    return "https://www.google.com/s2/favicons?domain=youtube.com&sz=256";
+  }
+  if (str.includes("github.com")) {
+    return "https://www.google.com/s2/favicons?domain=github.com&sz=256";
+  }
+  if (str.includes("telegram.org") || str.includes("t.me")) {
+    return "https://www.google.com/s2/favicons?domain=telegram.org&sz=256";
+  }
+  if (str.includes("tiktok.com")) {
+    return "https://www.google.com/s2/favicons?domain=tiktok.com&sz=256";
+  }
+  if (str.includes("instagram.com")) {
+    return "https://www.google.com/s2/favicons?domain=instagram.com&sz=256";
+  }
+  if (str.includes("twitter.com") || str.includes("x.com")) {
+    return "https://www.google.com/s2/favicons?domain=x.com&sz=256";
+  }
+  if (str.includes("discord.com") || str.includes("discord.gg")) {
+    return "https://www.google.com/s2/favicons?domain=discord.com&sz=256";
+  }
+  if (str.includes("google.com")) {
+    return "https://www.google.com/s2/favicons?domain=google.com&sz=256";
+  }
+  if (str.includes("figma.com")) {
+    return "https://www.google.com/s2/favicons?domain=figma.com&sz=256";
+  }
+  if (str.includes("spotify.com")) {
+    return "https://www.google.com/s2/favicons?domain=spotify.com&sz=256";
+  }
   return "";
 }
 
@@ -319,7 +360,7 @@ function resolveKnownAppBanner(url = "", title = "") {
 }
 
 // --- Website Logo & Favicon Extraction Helpers ---
-function getLogoSources(url, size = 256, customLogoUrl = null) {
+function getLogoSources(url, size = 256, customLogoUrl = null, title = null) {
   if (!url || typeof url !== 'string') return customLogoUrl ? [customLogoUrl] : ['images/jobslak_logo.jpg'];
   try {
     let cleanUrl = url.trim();
@@ -331,39 +372,54 @@ function getLogoSources(url, size = 256, customLogoUrl = null) {
 
     const sources = [];
 
-    // 1. High-precision known authentic app logo detection
-    const knownLogo = resolveKnownAppLogo(cleanUrl);
-    if (knownLogo) {
-      sources.push(knownLogo);
-    }
-
-    // 2. Custom logo URL if provided and not generic google favicon
-    if (customLogoUrl && customLogoUrl.trim() !== '' && !customLogoUrl.includes('google.com/s2/favicons')) {
-      if (!sources.includes(customLogoUrl)) {
-        sources.unshift(customLogoUrl);
+    // 1. Explicit Custom Logo URL (highest user priority if valid)
+    if (customLogoUrl && typeof customLogoUrl === 'string' && customLogoUrl.trim() !== '') {
+      const trimmedLogo = customLogoUrl.trim();
+      if (!sources.includes(trimmedLogo)) {
+        sources.push(trimmedLogo);
       }
     }
 
-    // 3. Domain direct assets (apple touch icon, favicon, app logos)
+    // 2. High-precision known authentic app logo detection (matches URL & Title)
+    const knownLogo = resolveKnownAppLogo(cleanUrl, title || '');
+    if (knownLogo && !sources.includes(knownLogo)) {
+      sources.push(knownLogo);
+    }
+
+    // 3. Google High-Resolution Favicon CDN (256px / 128px) - Highly reliable, genuine site icon, zero CORS issues
+    const googleFavicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=${size >= 128 ? 256 : 128}`;
+    if (!sources.includes(googleFavicon)) {
+      sources.push(googleFavicon);
+    }
+
+    // 4. Clearbit Logo API - Crisp corporate / platform logos
+    const clearbitLogo = `https://logo.clearbit.com/${domain}`;
+    if (!sources.includes(clearbitLogo)) {
+      sources.push(clearbitLogo);
+    }
+
+    // 5. IconHorse Favicon Extractor API
+    const iconHorse = `https://icon.horse/icon/${domain}`;
+    if (!sources.includes(iconHorse)) {
+      sources.push(iconHorse);
+    }
+
+    // 6. DuckDuckGo Favicon Service
+    const ddgFavicon = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+    if (!sources.includes(ddgFavicon)) {
+      sources.push(ddgFavicon);
+    }
+
+    // 7. Domain direct assets (fallbacks)
     sources.push(
-      `https://${domain}/apple-touch-icon.png`,
-      `https://${domain}/apple-touch-icon-precomposed.png`,
       `https://${domain}/favicon.ico`,
       `https://${domain}/favicon.png`,
-      `https://${domain}/img/logo.png`,
-      `https://${domain}/assets/logo.png`
-    );
-
-    // 4. Remote fallbacks
-    sources.push(
-      `https://unavatar.io/${domain}?fallback=false`,
-      `https://icons.duckduckgo.com/ip3/${domain}.ico`,
-      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
+      `https://${domain}/apple-touch-icon.png`
     );
 
     return sources;
   } catch (e) {
-    const known = resolveKnownAppLogo(url);
+    const known = resolveKnownAppLogo(url, title || '');
     return known ? [known] : (customLogoUrl ? [customLogoUrl] : ['images/jobslak_logo.jpg']);
   }
 }
@@ -600,7 +656,7 @@ function renderManagerTable() {
       </td>
     </tr>
   ` : list.map(app => {
-    const logoSources = getLogoSources(app.url, 128, app.logoUrl);
+    const logoSources = getLogoSources(app.url, 128, app.logoUrl, app.title);
     const logoSourcesJson = JSON.stringify(logoSources).replace(/"/g, '&quot;');
     const domain = getDomainName(app.url);
     // Always use stored imageUrl first; external screenshot only if no imageUrl
@@ -811,36 +867,38 @@ function loadAppsData() {
     const cleanTitle = item.title || '';
     const resolvedLogo = resolveKnownAppLogo(cleanUrl, cleanTitle);
     const resolvedBanner = resolveKnownAppBanner(cleanUrl, cleanTitle);
+    const domain = getDomainName(cleanUrl);
 
     let logoUrl = item.logoUrl;
-    if (!logoUrl || logoUrl.includes('google.com/s2/favicons') || logoUrl.trim() === '' || resolvedLogo) {
-      logoUrl = resolvedLogo || logoUrl || '';
+    if (resolvedLogo) {
+      logoUrl = resolvedLogo;
+    } else if (!logoUrl || logoUrl.trim() === '') {
+      if (domain) {
+        logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=256`;
+      }
     }
 
     let imageUrl = item.imageUrl;
-    if (!imageUrl || imageUrl.includes('unsplash.com') || resolvedBanner) {
-      imageUrl = resolvedBanner || imageUrl || '';
+    if (resolvedBanner) {
+      imageUrl = resolvedBanner;
+    } else if (!imageUrl || imageUrl.includes('unsplash.com')) {
+      imageUrl = cleanUrl ? `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(cleanUrl)}` : '';
     }
 
     return {
       ...item,
-      logoUrl: resolvedLogo || logoUrl,
-      imageUrl: resolvedBanner || imageUrl
+      logoUrl: logoUrl || resolvedLogo || '',
+      imageUrl: imageUrl || resolvedBanner || ''
     };
   });
 
-  // Build official apps ensuring current banners and metadata are preserved
+  // Build official apps ensuring current banners and metadata are preserved, while retaining user edits
   const officialApps = DEFAULT_APPS.map(defApp => {
     const existing = existingDefaultMap.get(defApp.id);
     if (existing) {
       return {
         ...defApp,
-        views: existing.views !== undefined ? existing.views : defApp.views,
-        likes: existing.likes !== undefined ? existing.likes : defApp.likes,
-        featured: existing.featured !== undefined ? existing.featured : defApp.featured,
-        isTesting: existing.isTesting !== undefined ? existing.isTesting : defApp.isTesting,
-        imageUrl: defApp.imageUrl,
-        logoUrl: defApp.logoUrl
+        ...existing
       };
     }
     return { ...defApp };
@@ -933,7 +991,7 @@ function renderApps() {
     const tagsHtml = app.tags.map(t => `<span class="tech-tag">${t}</span>`).join('');
     const btnPreviewText = TRANSLATIONS[currentLang].btn_preview;
 
-    const logoSources = getLogoSources(app.url, 128, app.logoUrl);
+    const logoSources = getLogoSources(app.url, 128, app.logoUrl, app.title);
     const logoSourcesJson = JSON.stringify(logoSources).replace(/"/g, '&quot;');
     const domain = getDomainName(app.url);
     // Always use stored imageUrl first; external screenshot only if no imageUrl
@@ -1125,42 +1183,54 @@ function setupUrlLogoListeners() {
   const urlInputs = [
     {
       inputId: "app-url-input",
+      titleInputId: "app-title-input",
       catId: "app-cat-input",
       logoInputId: "app-logo-input",
       previewId: "app-url-logo-preview",
       imgId: "app-url-logo-img",
       textId: "app-url-domain-text",
+      statusBadgeId: "app-url-status-badge",
+      candidatesId: "app-logo-candidates",
       targetImageInputId: "app-image-input",
+      btnFetchId: "app-btn-fetch-logo",
       btnLogoId: "app-type-logo-btn",
       btnScreenshotId: "app-type-screenshot-btn"
     },
     {
       inputId: "edit-url-input",
+      titleInputId: "edit-title-input",
       catId: "edit-cat-input",
       logoInputId: "edit-logo-input",
       previewId: "edit-url-logo-preview",
       imgId: "edit-url-logo-img",
       textId: "edit-url-domain-text",
+      statusBadgeId: "edit-url-status-badge",
+      candidatesId: "edit-logo-candidates",
       targetImageInputId: "edit-image-input",
+      btnFetchId: "edit-btn-fetch-logo",
       btnLogoId: "edit-type-logo-btn",
       btnScreenshotId: "edit-type-screenshot-btn"
     }
   ];
 
-  urlInputs.forEach(({ inputId, catId, logoInputId, previewId, imgId, textId, targetImageInputId, btnLogoId, btnScreenshotId }) => {
-    const input = document.getElementById(inputId);
-    const catInput = document.getElementById(catId);
-    const logoInput = document.getElementById(logoInputId);
-    const preview = document.getElementById(previewId);
-    const img = document.getElementById(imgId);
-    const text = document.getElementById(textId);
-    const targetImageInput = document.getElementById(targetImageInputId);
-    const btnLogo = document.getElementById(btnLogoId);
-    const btnScreenshot = document.getElementById(btnScreenshotId);
+  urlInputs.forEach(cfg => {
+    const input = document.getElementById(cfg.inputId);
+    const titleInput = document.getElementById(cfg.titleInputId);
+    const catInput = document.getElementById(cfg.catId);
+    const logoInput = document.getElementById(cfg.logoInputId);
+    const preview = document.getElementById(cfg.previewId);
+    const img = document.getElementById(cfg.imgId);
+    const text = document.getElementById(cfg.textId);
+    const statusBadge = document.getElementById(cfg.statusBadgeId);
+    const candidatesEl = document.getElementById(cfg.candidatesId);
+    const targetImageInput = document.getElementById(cfg.targetImageInputId);
+    const btnFetch = document.getElementById(cfg.btnFetchId);
+    const btnLogo = document.getElementById(cfg.btnLogoId);
+    const btnScreenshot = document.getElementById(cfg.btnScreenshotId);
 
     if (!input || !preview || !img || !text) return;
 
-    let activeMode = "logo"; // Default logo icon for App/Tool
+    let activeMode = "logo"; // Default logo icon
 
     const updateModeButtons = () => {
       if (btnLogo && btnScreenshot) {
@@ -1174,7 +1244,51 @@ function setupUrlLogoListeners() {
       }
     };
 
-    const applySelectedImage = () => {
+    const renderCandidates = (candidates, activeUrl) => {
+      if (!candidatesEl) return;
+      candidatesEl.innerHTML = "";
+      candidates.forEach(cand => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "logo-candidate-chip" + (cand.url === activeUrl ? " active" : "");
+        chip.title = `ជ្រើសរើស Logo ពី ${cand.label}`;
+        chip.innerHTML = `<img src="${cand.url}" onerror="this.style.display='none'"> <span>${cand.label}</span>`;
+        chip.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (logoInput) logoInput.value = cand.url;
+          img.src = cand.url;
+          candidatesEl.querySelectorAll(".logo-candidate-chip").forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+        });
+        candidatesEl.appendChild(chip);
+      });
+    };
+
+    const autoFillTitle = (domain, url) => {
+      if (!titleInput || titleInput.value.trim() !== '') return;
+      const str = ((url || '') + ' ' + (domain || '')).toLowerCase();
+      if (str.includes("resize-vdo") || str.includes("resizvdo")) titleInput.value = "ResizVdo - Video Converter";
+      else if (str.includes("football")) titleInput.value = "Football Analysis Studio";
+      else if (str.includes("remove-logo") || str.includes("logoremove")) titleInput.value = "LogoRemove Studio";
+      else if (str.includes("bulk-poster") || str.includes("bulkposter")) titleInput.value = "Bulk Poster Generator";
+      else if (str.includes("vdo-to-clip") || str.includes("vdoclip")) titleInput.value = "Khmer Video Clipper Pro";
+      else if (str.includes("jobslak")) titleInput.value = "Tag & Location Manager";
+      else if (str.includes("khemvoen")) titleInput.value = "វត្តខេមរវ័ន (វត្តមានវៃឆ្លាត)";
+      else if (str.includes("attenden")) titleInput.value = "Student Attendance System";
+      else if (str.includes("facebook")) titleInput.value = "Facebook";
+      else if (str.includes("youtube")) titleInput.value = "YouTube";
+      else if (str.includes("github")) titleInput.value = "GitHub";
+      else if (str.includes("telegram")) titleInput.value = "Telegram";
+      else if (str.includes("tiktok")) titleInput.value = "TikTok";
+      else {
+        // Humanize domain (e.g. "my-app.vercel.app" -> "My App")
+        const namePart = domain.replace(/\.(vercel\.app|github\.io|netlify\.app|com|org|io|net|app|dev)$/i, '');
+        const cleanName = namePart.split(/[-_.]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        if (cleanName) titleInput.value = cleanName;
+      }
+    };
+
+    const applySelectedImage = (isManual = false) => {
       const val = input.value.trim();
       const domain = getDomainName(val);
       if (!domain) {
@@ -1182,32 +1296,58 @@ function setupUrlLogoListeners() {
         return;
       }
 
-      const customLogoVal = logoInput ? logoInput.value.trim() : null;
-      const sources = getLogoSources(val, 128, customLogoVal);
-      const cleanUrl = val.startsWith('http') ? val : 'https://' + val;
-      const screenshotUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=1200&h=800`;
-      const selectedUrl = activeMode === "logo" ? (sources.length > 0 ? sources[0] : `https://www.google.com/s2/favicons?domain=${domain}&sz=128`) : screenshotUrl;
+      autoFillTitle(domain, val);
 
-      img.dataset.domain = domain;
-      if (activeMode === "logo") {
-        img.dataset.logoSources = JSON.stringify(sources);
-        img.dataset.sourceIdx = "0";
-      } else {
-        img.dataset.logoSources = "[]";
-        img.dataset.sourceIdx = "0";
+      const titleVal = titleInput ? titleInput.value.trim() : '';
+      const customLogoVal = logoInput ? logoInput.value.trim() : null;
+      const sources = getLogoSources(val, 256, customLogoVal, titleVal);
+      const cleanUrl = val.startsWith('http') ? val : 'https://' + val;
+      const knownBanner = resolveKnownAppBanner(cleanUrl, titleVal);
+      const screenshotUrl = knownBanner || `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(cleanUrl)}`;
+
+      // Primary detected real logo
+      const primaryLogo = (customLogoVal && customLogoVal !== '') 
+        ? customLogoVal 
+        : (sources.length > 0 ? sources[0] : `https://www.google.com/s2/favicons?domain=${domain}&sz=256`);
+
+      // Automatically fill logo input if empty or manually requested
+      if (logoInput && (!logoInput.value.trim() || isManual)) {
+        logoInput.value = primaryLogo;
       }
 
-      img.src = selectedUrl;
+      // Automatically fill banner/screenshot input if empty or manually requested
+      if (targetImageInput && (!targetImageInput.value.trim() || isManual)) {
+        targetImageInput.value = screenshotUrl;
+      }
+
+      // Prepare Candidate Logos
+      const known = resolveKnownAppLogo(cleanUrl, titleVal);
+      const candidates = [];
+      if (known) {
+        candidates.push({ label: "Official Logo", url: known });
+      }
+      candidates.push(
+        { label: "Google 256px", url: `https://www.google.com/s2/favicons?domain=${domain}&sz=256` },
+        { label: "Clearbit", url: `https://logo.clearbit.com/${domain}` },
+        { label: "IconHorse", url: `https://icon.horse/icon/${domain}` }
+      );
+      renderCandidates(candidates, logoInput ? logoInput.value.trim() : primaryLogo);
+
+      // Set image element
+      const activeUrl = activeMode === "logo" ? (logoInput ? logoInput.value.trim() : primaryLogo) : screenshotUrl;
+      img.dataset.domain = domain;
+      img.dataset.logoSources = JSON.stringify(sources);
+      img.dataset.sourceIdx = "0";
+      img.src = activeUrl;
       img.style.display = "block";
-      text.textContent = activeMode === "logo" 
-        ? `● Website Logo Icon (${domain})` 
-        : `● Full Website Screenshot (${domain})`;
+
+      text.textContent = `● ${domain}`;
+      if (statusBadge) {
+        statusBadge.textContent = "✓ Logo រកឃើញ";
+      }
 
       preview.style.display = "flex";
-
-      if (targetImageInput) {
-        targetImageInput.value = selectedUrl;
-      }
+      if (window.lucide) lucide.createIcons();
     };
 
     const autoSelectModeFromCat = () => {
@@ -1222,26 +1362,40 @@ function setupUrlLogoListeners() {
 
     input.addEventListener("input", () => {
       autoSelectModeFromCat();
-      applySelectedImage();
+      applySelectedImage(false);
     });
 
     input.addEventListener("paste", () => {
       setTimeout(() => {
         autoSelectModeFromCat();
-        applySelectedImage();
+        applySelectedImage(false);
       }, 50);
     });
+
+    if (btnFetch) {
+      btnFetch.addEventListener("click", () => {
+        btnFetch.classList.add("loading");
+        autoSelectModeFromCat();
+        applySelectedImage(true);
+        setTimeout(() => {
+          btnFetch.classList.remove("loading");
+          showToast(currentLang === 'km' ? "✓ បានទាញយក Logo និងព័ត៌មាន Web ជោគជ័យ!" : "✓ Web logo & metadata fetched successfully!");
+        }, 300);
+      });
+    }
 
     if (catInput) {
       catInput.addEventListener("change", () => {
         autoSelectModeFromCat();
-        applySelectedImage();
+        applySelectedImage(false);
       });
     }
 
     if (logoInput) {
       logoInput.addEventListener("input", () => {
-        if (activeMode === "logo") applySelectedImage();
+        if (activeMode === "logo" && logoInput.value.trim()) {
+          img.src = logoInput.value.trim();
+        }
       });
     }
 
@@ -1249,7 +1403,7 @@ function setupUrlLogoListeners() {
       btnLogo.addEventListener("click", () => {
         activeMode = "logo";
         updateModeButtons();
-        applySelectedImage();
+        applySelectedImage(false);
       });
     }
 
@@ -1257,7 +1411,7 @@ function setupUrlLogoListeners() {
       btnScreenshot.addEventListener("click", () => {
         activeMode = "screenshot";
         updateModeButtons();
-        applySelectedImage();
+        applySelectedImage(false);
       });
     }
   });
@@ -1404,8 +1558,10 @@ function setupEventListeners() {
       app.category = document.getElementById("edit-cat-input").value;
       app.description = document.getElementById("edit-desc-input").value.trim();
       app.url = editUrl;
+      const editDomain = getDomainName(editUrl);
+      const autoEditLogo = editDomain ? `https://www.google.com/s2/favicons?domain=${editDomain}&sz=256` : '';
       app.imageUrl = document.getElementById("edit-image-input").value.trim() || knownBanner || app.imageUrl;
-      app.logoUrl = document.getElementById("edit-logo-input").value.trim() || knownLogo || app.logoUrl;
+      app.logoUrl = document.getElementById("edit-logo-input").value.trim() || knownLogo || autoEditLogo || app.logoUrl;
       
       const tagsRaw = document.getElementById("edit-tags-input").value.trim();
       app.tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : app.tags;
@@ -1465,7 +1621,10 @@ function setupEventListeners() {
       const knownLogo = resolveKnownAppLogo(url, title);
       const knownBanner = resolveKnownAppBanner(url, title);
 
-      const resolvedLogoUrl = logoUrl || knownLogo || '';
+      const addDomain = getDomainName(url);
+      const autoAddLogo = addDomain ? `https://www.google.com/s2/favicons?domain=${addDomain}&sz=256` : '';
+
+      const resolvedLogoUrl = logoUrl || knownLogo || autoAddLogo || '';
       const resolvedImageUrl = imageUrl || knownBanner || (url ? `https://image.thum.io/get/width/800/crop/500/${encodeURIComponent(url)}` : '') || 'images/resizvdo_banner.jpg';
 
       const newApp = {

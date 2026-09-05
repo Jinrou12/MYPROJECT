@@ -166,13 +166,25 @@
           </div>
 
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" data-i18n="form_app_demo_url">Link ទៅកាន់ Live Web App (URL) *</label>
+            <div class="form-group" style="flex: 1.2;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+                <label class="form-label" style="margin-bottom: 0;" data-i18n="form_app_demo_url">Link ទៅកាន់ Live Web App (URL) *</label>
+                <button type="button" class="btn btn-outline-glow btn-sm btn-fetch-real-logo" id="app-btn-fetch-logo" style="padding: 4px 10px; font-size: 0.78rem; display: flex; align-items: center; gap: 5px;" title="ទាញយក Logo ពិតប្រាកដ និងព័ត៌មានពី Web">
+                  <i data-lucide="sparkles" style="width: 13px; height: 13px; color: var(--primary-cyan);"></i> <span>ទាញយក Logo & Info</span>
+                </button>
+              </div>
               <input type="url" id="app-url-input" class="form-control" placeholder="https://my-app.example.com" required>
               <div id="app-url-logo-preview" class="url-logo-preview-box" style="display: none;">
-                <img id="app-url-logo-img" src="" alt="Website Logo" class="url-logo-badge" onerror="handleLogoError(this)">
-                <div style="display: flex; flex-direction: column; gap: 3px;">
-                  <span id="app-url-domain-text" class="url-domain-label"></span>
+                <div class="url-logo-thumb-wrap">
+                  <img id="app-url-logo-img" src="" alt="Website Logo" class="url-logo-badge" onerror="handleLogoError(this)">
+                  <span class="real-logo-badge-verified"><i data-lucide="check-check" style="width: 12px; height: 12px; display: inline-block; vertical-align: -1px;"></i> Logo ពិត</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <span id="app-url-domain-text" class="url-domain-label"></span>
+                    <span id="app-url-status-badge" class="fetch-status-pill">✓ Logo ពិតប្រាកដ</span>
+                  </div>
+                  <div id="app-logo-candidates" class="logo-candidates-row"></div>
                   <div class="image-type-toggle-group">
                     <button type="button" class="img-type-btn active" id="app-type-logo-btn">
                       🎨 Logo Icon (App/Tool)
@@ -184,7 +196,7 @@
                 </div>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="flex: 0.8;">
               <label class="form-label" data-i18n="form_app_image_url">Link រូបភាព Screenshot (Image URL)</label>
               <input type="text" id="app-image-input" class="form-control" placeholder="https://images.unsplash.com/...">
             </div>
@@ -313,13 +325,25 @@
           </div>
 
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" data-i18n="form_app_demo_url">Link ទៅកាន់ Live Web App (URL) *</label>
+            <div class="form-group" style="flex: 1.2;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+                <label class="form-label" style="margin-bottom: 0;" data-i18n="form_app_demo_url">Link ទៅកាន់ Live Web App (URL) *</label>
+                <button type="button" class="btn btn-outline-glow btn-sm btn-fetch-real-logo" id="edit-btn-fetch-logo" style="padding: 4px 10px; font-size: 0.78rem; display: flex; align-items: center; gap: 5px;" title="ទាញយក Logo ពិតប្រាកដ និងព័ត៌មានពី Web">
+                  <i data-lucide="sparkles" style="width: 13px; height: 13px; color: var(--primary-cyan);"></i> <span>ទាញយក Logo & Info</span>
+                </button>
+              </div>
               <input type="url" id="edit-url-input" class="form-control" required>
               <div id="edit-url-logo-preview" class="url-logo-preview-box" style="display: none;">
-                <img id="edit-url-logo-img" src="" alt="Website Logo" class="url-logo-badge" onerror="handleLogoError(this)">
-                <div style="display: flex; flex-direction: column; gap: 3px;">
-                  <span id="edit-url-domain-text" class="url-domain-label"></span>
+                <div class="url-logo-thumb-wrap">
+                  <img id="edit-url-logo-img" src="" alt="Website Logo" class="url-logo-badge" onerror="handleLogoError(this)">
+                  <span class="real-logo-badge-verified"><i data-lucide="check-check" style="width: 12px; height: 12px; display: inline-block; vertical-align: -1px;"></i> Logo ពិត</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <span id="edit-url-domain-text" class="url-domain-label"></span>
+                    <span id="edit-url-status-badge" class="fetch-status-pill">✓ Logo ពិតប្រាកដ</span>
+                  </div>
+                  <div id="edit-logo-candidates" class="logo-candidates-row"></div>
                   <div class="image-type-toggle-group">
                     <button type="button" class="img-type-btn active" id="edit-type-logo-btn">
                       🎨 Logo Icon (App/Tool)
@@ -331,7 +355,7 @@
                 </div>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="flex: 0.8;">
               <label class="form-label" data-i18n="form_app_image_url">Link រូបភាព Screenshot (Image URL)</label>
               <input type="text" id="edit-image-input" class="form-control">
             </div>
