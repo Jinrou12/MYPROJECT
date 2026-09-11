@@ -470,6 +470,69 @@ function isAppPinned(id) {
   return pinnedAppIds.has(id);
 }
 
+// --- Deleted / Excluded Projects System ---
+function loadDeletedApps() {
+  try {
+    const raw = localStorage.getItem("nexus_deleted_apps");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {
+    console.warn("Error loading deleted apps", e);
+  }
+  return [];
+}
+
+let deletedAppIdentifiers = new Set(loadDeletedApps());
+
+function saveDeletedApps() {
+  try {
+    localStorage.setItem("nexus_deleted_apps", JSON.stringify(Array.from(deletedAppIdentifiers)));
+  } catch (e) {
+    console.warn("Error saving deleted apps", e);
+  }
+}
+
+function isAppDeleted(appOrId, url = '', name = '') {
+  if (!appOrId) return false;
+  if (typeof appOrId === 'string') {
+    if (deletedAppIdentifiers.has(appOrId)) return true;
+  } else {
+    if (deletedAppIdentifiers.has(appOrId.id)) return true;
+    url = url || appOrId.url || '';
+    name = name || appOrId.name || appOrId.title || '';
+  }
+  if (url) {
+    const domain = getDomainName(url).toLowerCase();
+    if (domain && deletedAppIdentifiers.has(domain)) return true;
+    const cleanUrl = url.replace(/\/$/, '').toLowerCase();
+    if (deletedAppIdentifiers.has(cleanUrl)) return true;
+  }
+  if (name) {
+    const normName = name.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    if (normName && deletedAppIdentifiers.has(normName)) return true;
+  }
+  return false;
+}
+
+function markAppAsDeleted(app) {
+  if (!app) return;
+  if (app.id) deletedAppIdentifiers.add(app.id);
+  if (app.url) {
+    const domain = getDomainName(app.url).toLowerCase();
+    if (domain) deletedAppIdentifiers.add(domain);
+    deletedAppIdentifiers.add(app.url.replace(/\/$/, '').toLowerCase());
+  }
+  if (app.name) {
+    deletedAppIdentifiers.add(app.name.toLowerCase());
+  }
+  if (app.title) {
+    deletedAppIdentifiers.add(app.title.toLowerCase().replace(/[^a-z0-9_-]/g, ''));
+  }
+  saveDeletedApps();
+}
+
 
 // --- Known Real Web Apps Logo & Banner Catalog ---
 function resolveKnownAppLogo(url = "", title = "") {
@@ -983,13 +1046,20 @@ function handleToggleFeatured(id) {
 function handleDeleteApp(id) {
   const app = appsData.find(a => a.id === id);
   if (!app) return;
-  if (confirm(`តើអ្នកពិតជាចង់លុប "${app.title}" ចេញមែនទេ?`)) {
+  const msg = currentLang === 'km' 
+    ? `តើអ្នកពិតជាចង់លុប "${app.title}" ចេញមែនទេ?\n(ប្រព័ន្ធនឹងចងចាំ ហើយមិន Sync ឬបង្ហាញគម្រោងនេះឡើងវិញឡើយ)` 
+    : `Are you sure you want to delete "${app.title}"?\n(It will be permanently excluded and will not re-sync)`;
+
+  if (confirm(msg)) {
+    markAppAsDeleted(app);
     appsData = appsData.filter(a => a.id !== id);
     saveAppsData();
     updateStats();
+    renderCategories();
     renderApps();
+    renderManagerCategories();
     renderManagerTable();
-    showToast(currentLang === 'km' ? "បានលុប Web App ជោគជ័យ" : "App deleted successfully");
+    showToast(currentLang === 'km' ? `បានលុប "${app.title}" ជាអចិន្ត្រៃយ៍ជោគជ័យ!` : `"${app.title}" deleted permanently!`);
   }
 }
 
@@ -1143,7 +1213,7 @@ function loadAppsData() {
       };
     }
     return { ...defApp };
-  });
+  }).filter(defApp => !isAppDeleted(defApp));
 
   // User custom apps stay in front, official apps follow
   appsData = [...userCustomApps, ...officialApps];
@@ -1170,6 +1240,9 @@ function loadAppsData() {
     }
     return true;
   });
+
+  // Permanently filter out any deleted projects
+  appsData = appsData.filter(app => !isAppDeleted(app));
 
   saveAppsData();
 }
@@ -2240,6 +2313,11 @@ async function syncWithVercelApi(silent = false) {
       // Find new projects not yet in appsData
       let newCount = 0;
       projects.forEach(proj => {
+        // Skip if user explicitly deleted this project from the showcase
+        if (isAppDeleted(proj.id, proj.url, proj.name)) {
+          return;
+        }
+
         const normProjUrl = (proj.url || '').replace(/\/$/, '').toLowerCase();
         const normProjDomain = getDomainName(proj.url).toLowerCase();
         const projName = (proj.name || '').toLowerCase();
