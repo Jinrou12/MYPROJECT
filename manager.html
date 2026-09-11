@@ -85,10 +85,17 @@
           <p>ផ្ទាំងគ្រប់គ្រងទិន្នន័យដាច់ដោយឡែក (Manager Suite) សម្រាប់ Manage, Edit, Delete & Feature Web Apps</p>
         </div>
 
-        <button id="view-add-app-btn" class="btn btn-primary">
-          <i data-lucide="plus-circle"></i>
-          <span data-i18n="btn_add_app">បន្ថែម App ថ្មី</span>
-        </button>
+        <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+          <button id="open-vercel-sync-btn" class="nav-sync-btn" style="padding: 0.65rem 1.1rem; font-size: 0.9rem;" title="Vercel Live Auto-Sync">
+            <i data-lucide="refresh-cw" class="sync-icon"></i>
+            <span class="sync-btn-label">Vercel Auto-Sync</span>
+            <span class="sync-live-dot" id="nav-sync-dot"></span>
+          </button>
+          <button id="view-add-app-btn" class="btn btn-primary">
+            <i data-lucide="plus-circle"></i>
+            <span data-i18n="btn_add_app">បន្ថែម App ថ្មី</span>
+          </button>
+        </div>
       </div>
 
       <!-- Summary Metric Cards -->
@@ -405,6 +412,88 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vercel Auto-Sync Modal -->
+  <div class="modal-overlay" id="vercel-sync-modal">
+    <div class="modal-content" style="max-width: 620px;">
+      <div class="modal-header">
+        <h2 class="modal-title" style="display: flex; align-items: center; gap: 0.6rem;">
+          <i data-lucide="refresh-cw" style="color: var(--primary-cyan);"></i>
+          <span>Vercel Live Auto-Sync Engine</span>
+        </h2>
+        <button type="button" class="modal-close-btn" id="close-vercel-sync-modal">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding-top: 0.5rem;">
+        <!-- Status Banner -->
+        <div class="vercel-status-banner">
+          <div class="vercel-team-info">
+            <div class="vercel-team-icon">
+              <svg viewBox="0 0 115 100"><polygon points="57.5 0 115 100 0 100"></polygon></svg>
+            </div>
+            <div>
+              <div style="font-weight: 700; color: #fff; font-size: 1rem;">empier-and-fire / myproject</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);" id="vercel-last-sync-text">Auto-Sync System Ready</div>
+            </div>
+          </div>
+          <div class="vercel-badge-pill" id="vercel-status-pill">
+            <span class="sync-live-dot"></span>
+            <span id="vercel-status-label">Connected</span>
+          </div>
+        </div>
+
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.2rem; line-height: 1.6;">
+          រាល់ពេលដែលអ្នក Deploy គម្រោងថ្មីចូលក្នុង Vercel ប្រព័ន្ធនឹងចាប់យក Project នោះមកបង្ហាញលើ Web នេះដោយស្វ័យប្រវត្តិ។
+        </p>
+
+        <!-- Token Settings -->
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <label class="form-label" style="margin: 0;">Vercel Personal Access Token</label>
+            <a href="https://vercel.com/account/tokens" target="_blank" style="font-size: 0.8rem; color: var(--primary-cyan); text-decoration: none;">
+              <i data-lucide="external-link" style="width: 12px; height: 12px; vertical-align: middle;"></i> យក Token នៅ vercel.com
+            </a>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="password" id="vercel-token-input" class="form-control" placeholder="បញ្ចូល Vercel Token (ឧ. vercel_tok_...)" autocomplete="off">
+            <button type="button" id="toggle-token-visibility-btn" class="btn btn-secondary" style="padding: 0 0.8rem;" title="Show/Hide">
+              <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+            </button>
+          </div>
+          <small style="color: var(--text-dim); font-size: 0.78rem; display: block; margin-top: 0.3rem;">
+            Token នឹងត្រូវរក្សាទុកក្នុង Browser របស់អ្នកយ៉ាងមានសុវត្ថិភាពដើម្បី Sync Live Project ពី Vercel API។
+          </small>
+        </div>
+
+        <div style="display: flex; gap: 0.8rem; margin: 1.2rem 0 1.5rem;">
+          <button type="button" id="save-sync-token-btn" class="btn btn-primary" style="flex: 1;">
+            <i data-lucide="check"></i> រក្សាទុក & ភ្ជាប់ (Save & Connect)
+          </button>
+          <button type="button" id="manual-sync-now-btn" class="btn btn-secondary" style="border-color: rgba(0, 242, 254, 0.4);">
+            <i data-lucide="refresh-cw" class="sync-icon"></i> ធ្វើសមកាលកម្មឥឡូវ (Sync Now)
+          </button>
+        </div>
+
+        <!-- Terminal 1-Step Sync Command -->
+        <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1.2rem;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.3rem;">
+            💻 ឬ Sync តាមរយៈ Terminal (1-Click Auto Update & Deploy):
+          </div>
+          <div class="terminal-code-box">
+            <code>npm run sync</code>
+            <button type="button" class="copy-cmd-btn" onclick="navigator.clipboard.writeText('npm run sync'); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 1500);">Copy</button>
+          </div>
+          <div class="terminal-code-box" style="margin-top: 0.4rem;">
+            <code>npm run watch</code>
+            <button type="button" class="copy-cmd-btn" onclick="navigator.clipboard.writeText('npm run watch'); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 1500);">Copy</button>
+          </div>
+          <p style="font-size: 0.78rem; color: var(--text-dim); margin-top: 0.4rem;">
+            <span style="color: var(--primary-cyan); font-weight: 600;">npm run watch</span> នឹងតាមដានរាល់ពេលអ្នក Deploy គម្រោងថ្មីនៅលើ Vercel វានឹងរត់ចូល web នេះ auto ភ្លាមៗ 100%!
+          </p>
+        </div>
       </div>
     </div>
   </div>

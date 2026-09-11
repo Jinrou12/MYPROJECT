@@ -13,7 +13,7 @@ const DEFAULT_APPS = [
     url: "https://chabslak-empier-and-fire.vercel.app",
     imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fchabslak-empier-and-fire.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
     logoUrl: "https://www.google.com/s2/favicons?domain=https%3A%2F%2Fchabslak-empier-and-fire.vercel.app&sz=256",
-    tags: ["Vercel", category, "Web App"],
+    tags: ["Vercel", "Web App"],
     githubUrl: "",
     views: 100,
     likes: 5,
@@ -29,7 +29,7 @@ const DEFAULT_APPS = [
     url: "https://resize-vdo-oo25.vercel.app",
     imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fresize-vdo-oo25.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
     logoUrl: "https://www.google.com/s2/favicons?domain=https%3A%2F%2Fresize-vdo-oo25.vercel.app&sz=256",
-    tags: ["Vercel", category, "Web App"],
+    tags: ["Vercel", "Web App"],
     githubUrl: "",
     views: 100,
     likes: 5,
@@ -1024,6 +1024,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderManagerTable();
   setupEventListeners();
   updateStats();
+  initVercelAutoSync();
   
   if (window.lucide) {
     lucide.createIcons();
@@ -2047,6 +2048,302 @@ function handleTogglePin(id) {
   renderApps();
   renderManagerCategories();
   renderManagerTable();
+}
+
+// --- Vercel Real-time Auto-Sync System ---
+const VERCEL_TEAM_ID = 'team_eUORGOrJjfO61VbiWmm7MMwa';
+let isVercelSyncing = false;
+
+function getStoredVercelToken() {
+  try {
+    return localStorage.getItem('nexus_vercel_token') || '';
+  } catch (e) {
+    return '';
+  }
+}
+
+function setStoredVercelToken(token) {
+  try {
+    if (token) {
+      localStorage.setItem('nexus_vercel_token', token.trim());
+    } else {
+      localStorage.removeItem('nexus_vercel_token');
+    }
+  } catch (e) {
+    console.warn('Error storing Vercel token', e);
+  }
+}
+
+function updateVercelSyncUI(connected, statusText, projectCount = null) {
+  const syncDots = document.querySelectorAll('.sync-live-dot, #nav-sync-dot');
+  syncDots.forEach(dot => {
+    if (connected) {
+      dot.classList.remove('idle');
+    } else {
+      dot.classList.add('idle');
+    }
+  });
+
+  const label = document.getElementById('vercel-status-label');
+  if (label) {
+    label.textContent = connected ? 'Connected' : 'Setup Token';
+    label.style.color = connected ? 'var(--accent-emerald)' : 'var(--accent-amber)';
+  }
+
+  const pill = document.getElementById('vercel-status-pill');
+  if (pill) {
+    pill.style.borderColor = connected ? 'rgba(0, 230, 118, 0.4)' : 'rgba(255, 183, 3, 0.4)';
+    pill.style.background = connected ? 'rgba(0, 230, 118, 0.12)' : 'rgba(255, 183, 3, 0.12)';
+  }
+
+  const text = document.getElementById('vercel-last-sync-text');
+  if (text) {
+    if (statusText) {
+      text.textContent = statusText;
+    } else if (connected) {
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      text.textContent = `Auto-Sync សកម្ម • ${projectCount !== null ? projectCount + ' គម្រោង • ' : ''}Sync ចុងក្រោយ: ${time}`;
+    } else {
+      text.textContent = 'Token មិនទាន់បានកំណត់ • ចុចដើម្បីភ្ជាប់';
+    }
+  }
+}
+
+async function syncWithVercelApi(silent = false) {
+  if (isVercelSyncing) return;
+  isVercelSyncing = true;
+
+  const syncIcons = document.querySelectorAll('.sync-icon');
+  syncIcons.forEach(icon => icon.classList.add('spinning'));
+
+  const token = getStoredVercelToken();
+  let projects = [];
+  let connected = false;
+
+  try {
+    // 1. Try serverless endpoint (/api/projects)
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    try {
+      const res = await fetch('/api/projects', { headers });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.connected && Array.isArray(data.projects)) {
+          projects = data.projects;
+          connected = true;
+        }
+      }
+    } catch (apiErr) {
+      console.log('Serverless api/projects unavailable or local mode, falling back to direct API');
+    }
+
+    // 2. If serverless didn't return projects, but we have a client token, query api.vercel.com directly!
+    if (!connected && token) {
+      try {
+        const vUrl = `https://api.vercel.com/v9/projects?limit=100&teamId=${VERCEL_TEAM_ID}`;
+        const vRes = await fetch(vUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (vRes.ok) {
+          const vData = await vRes.json();
+          if (vData && Array.isArray(vData.projects)) {
+            connected = true;
+            projects = vData.projects.map(p => {
+              let prodUrl = '';
+              if (p.targets && p.targets.production && p.targets.production.url) {
+                prodUrl = 'https://' + p.targets.production.url;
+              } else if (p.latestDeployments && p.latestDeployments[0] && p.latestDeployments[0].url) {
+                prodUrl = 'https://' + p.latestDeployments[0].url;
+              }
+              if (!prodUrl && p.name) prodUrl = `https://${p.name}.vercel.app`;
+
+              function formatTitle(n) {
+                return n.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+              }
+              function detectCat(n) {
+                const s = n.toLowerCase();
+                if (s.includes('audio') || s.includes('video') || s.includes('vdo') || s.includes('clip') || s.includes('tool') || s.includes('poster') || s.includes('post') || s.includes('convert') || s.includes('remove') || s.includes('color')) return 'Tool';
+                if (s.includes('app') || s.includes('attendance') || s.includes('portal') || s.includes('manage')) return 'APP';
+                return 'Web';
+              }
+
+              const cat = detectCat(p.name);
+              const title = formatTitle(p.name);
+
+              return {
+                id: 'app-' + p.name,
+                name: p.name,
+                title: title,
+                category: cat,
+                description: `${title} — Web Application deployed on Vercel.`,
+                descriptionEn: `${title} — Web Application deployed on Vercel.`,
+                url: prodUrl,
+                imageUrl: `https://api.microlink.io/?url=${encodeURIComponent(prodUrl)}&screenshot=true&meta=false&embed=screenshot.url`,
+                logoUrl: `https://www.google.com/s2/favicons?domain=${encodeURIComponent(prodUrl)}&sz=256`,
+                tags: ["Vercel", cat, "Web App"],
+                githubUrl: p.link && p.link.repo ? `https://github.com/${p.link.org || p.link.repoOwner}/${p.link.repo}` : "",
+                views: 120,
+                likes: 12,
+                featured: false,
+                updatedAt: p.updatedAt
+              };
+            }).filter(p => p.url && p.name !== 'myproject');
+          }
+        }
+      } catch (directErr) {
+        console.warn('Direct Vercel API error', directErr);
+      }
+    }
+
+    if (connected && projects.length > 0) {
+      // Find new projects not yet in appsData
+      let newCount = 0;
+      projects.forEach(proj => {
+        const normProjUrl = (proj.url || '').replace(/\/$/, '').toLowerCase();
+        const normProjDomain = getDomainName(proj.url).toLowerCase();
+        const projName = (proj.name || '').toLowerCase();
+
+        const exists = appsData.some(a => {
+          if (!a) return false;
+          if (a.id === proj.id || a.id === 'app-' + projName) return true;
+          const aNormUrl = (a.url || '').replace(/\/$/, '').toLowerCase();
+          const aDomain = getDomainName(a.url).toLowerCase();
+          if (aNormUrl === normProjUrl) return true;
+          if (normProjDomain && aDomain && normProjDomain === aDomain) return true;
+          if (projName && a.title && a.title.toLowerCase().replace(/\s+/g, '-') === projName) return true;
+          return false;
+        });
+
+        if (!exists) {
+          const knownLogo = resolveKnownAppLogo(proj.url, proj.title);
+          const knownBanner = resolveKnownAppBanner(proj.url, proj.title);
+          const screenSources = getWebsiteScreenshotSources(proj.url);
+          const defaultLogoSources = getLogoSources(proj.url, 256, null, proj.title);
+
+          appsData.unshift({
+            id: proj.id || ('app-' + proj.name),
+            title: proj.title,
+            category: proj.category || 'Web',
+            description: proj.description || `${proj.title} deployed on Vercel.`,
+            descriptionEn: proj.descriptionEn || `${proj.title} deployed on Vercel.`,
+            url: proj.url,
+            imageUrl: knownBanner || screenSources[0] || proj.imageUrl || '',
+            logoUrl: knownLogo || defaultLogoSources[0] || proj.logoUrl || '',
+            tags: proj.tags || ['Vercel', proj.category || 'Web'],
+            githubUrl: proj.githubUrl || '',
+            views: 150,
+            likes: 10,
+            featured: false,
+            createdAt: new Date().toISOString().split('T')[0]
+          });
+          newCount++;
+        }
+      });
+
+      if (newCount > 0) {
+        saveAppsData();
+        renderCategories();
+        renderApps();
+        renderManagerCategories();
+        renderManagerTable();
+        updateStats();
+
+        showToast(currentLang === 'km' 
+          ? `⚡ Vercel Auto-Sync: បានបន្ថែម ${newCount} គម្រោងថ្មីដោយស្វ័យប្រវត្តិ!` 
+          : `⚡ Vercel Auto-Sync: Added ${newCount} new project(s)!`);
+      } else if (!silent) {
+        showToast(currentLang === 'km' 
+          ? `✨ គម្រោង Vercel ទាំងអស់ (${projects.length}) ត្រូវបាន Sync រួចរាល់ហើយ!` 
+          : `✨ All Vercel projects (${projects.length}) are already up to date!`);
+      }
+
+      updateVercelSyncUI(true, null, appsData.length);
+    } else {
+      updateVercelSyncUI(!!token, token ? 'Token បានភ្ជាប់ • រង់ចាំទិន្នន័យពី Vercel' : 'មិនទាន់ភ្ជាប់ Token (ចុចដើម្បីភ្ជាប់)');
+      if (!silent) {
+        if (!token) {
+          showToast(currentLang === 'km' ? "សូមបញ្ចូល Vercel Token ដើម្បីបើក Real-time Auto-Sync!" : "Please enter Vercel Token to enable auto-sync!");
+          const modal = document.getElementById("vercel-sync-modal");
+          if (modal) openModal(modal);
+        } else {
+          showToast(currentLang === 'km' ? "មិនអាចទាក់ទង Vercel API បានទេ សូមពិនិត្យ Token!" : "Unable to reach Vercel API. Check your token!");
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Vercel sync caught error:', err);
+    if (!silent) {
+      showToast(currentLang === 'km' ? `បញ្ហា Sync: ${err.message}` : `Sync error: ${err.message}`);
+    }
+  } finally {
+    isVercelSyncing = false;
+    syncIcons.forEach(icon => icon.classList.remove('spinning'));
+  }
+}
+
+function initVercelAutoSync() {
+  const storedToken = getStoredVercelToken();
+  const tokenInput = document.getElementById('vercel-token-input');
+  if (tokenInput && storedToken) {
+    tokenInput.value = storedToken;
+  }
+
+  updateVercelSyncUI(!!storedToken, null, appsData.length);
+
+  // Auto-sync in background on load
+  setTimeout(() => {
+    syncWithVercelApi(true);
+  }, 1000);
+
+  // Setup Modal Triggers
+  const openBtns = document.querySelectorAll('#open-vercel-sync-btn, #mgr-vercel-sync-btn');
+  const modal = document.getElementById('vercel-sync-modal');
+  const closeBtn = document.getElementById('close-vercel-sync-modal');
+  const saveBtn = document.getElementById('save-sync-token-btn');
+  const manualSyncBtn = document.getElementById('manual-sync-now-btn');
+  const toggleVisibilityBtn = document.getElementById('toggle-token-visibility-btn');
+
+  openBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const currentToken = getStoredVercelToken();
+      if (tokenInput) tokenInput.value = currentToken;
+      if (modal) openModal(modal);
+    });
+  });
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener('click', () => closeModal(modal));
+  }
+
+  if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
+      const val = tokenInput ? tokenInput.value.trim() : '';
+      if (!val) {
+        setStoredVercelToken('');
+        updateVercelSyncUI(false);
+        showToast(currentLang === 'km' ? 'បានលុប Token ចេញ' : 'Token removed');
+        return;
+      }
+      setStoredVercelToken(val);
+      showToast(currentLang === 'km' ? '💾 បានរក្សាទុក Token! កំពុង Sync...' : '💾 Token saved! Syncing...');
+      syncWithVercelApi(false);
+    });
+  }
+
+  if (manualSyncBtn) {
+    manualSyncBtn.addEventListener('click', () => {
+      syncWithVercelApi(false);
+    });
+  }
+
+  if (toggleVisibilityBtn && tokenInput) {
+    toggleVisibilityBtn.addEventListener('click', () => {
+      tokenInput.type = tokenInput.type === 'password' ? 'text' : 'password';
+    });
+  }
 }
 
 // --- Stats Counter Update ---

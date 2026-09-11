@@ -1,0 +1,35 @@
+name: Auto-Sync Vercel Projects
+
+on:
+  schedule:
+    # Run every 6 hours automatically
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub web UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Vercel CLI
+        run: npm install --no-save vercel@latest
+
+      - name: Run Vercel Sync Engine
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_eUORGOrJjfO61VbiWmm7MMwa
+          VERCEL_PROJECT_ID: prj_OQXq3VHxFKbExr8PmDaxjGEUg6pA
+        run: |
+          if [ -n "$VERCEL_TOKEN" ]; then
+            echo "Running sync with cloud token..."
+            node sync-vercel.js
+          else
+            echo "No VERCEL_TOKEN secret configured. Skipping cloud sync."
+          fi
