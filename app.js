@@ -166,6 +166,120 @@ const DEFAULT_APPS = [
     featured: false,
     isTesting: true,
     createdAt: "2026-09-04"
+  },
+  {
+    id: "app-bulk-post",
+    title: "FB AutoPoster Pro",
+    category: "Tool",
+    description: "កម្មវិធីសម្រាប់បង្ហោះ និង Schedule លើ Facebook Groups & Pages ដោយស្វ័យប្រវត្តិតាមពេលវេលាកំណត់ ជាមួយ Excel Data និង Template។",
+    descriptionEn: "Facebook Bulk Poster & Group Scheduler with automated scheduling, templates, and analytics.",
+    url: "https://bulk-post.vercel.app",
+    imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fbulk-post.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    logoUrl: "",
+    tags: ["Facebook API", "Automation", "Bulk Post", "Scheduler"],
+    githubUrl: "",
+    views: 1850,
+    likes: 120,
+    featured: true,
+    createdAt: "2026-08-15"
+  },
+  {
+    id: "app-text-to-speak",
+    title: "VoiceCraft — AI Text-to-Speech Studio",
+    category: "Tool",
+    description: "កម្មវិធីបម្លែងអត្ថបទទៅជាសំឡេងធម្មជាតិដោយប្រើ AI (AI Text-to-Speech) ជាមួយ Voice Cloning និងការទាញយកសំឡេងជា MP3/WAV ច្បាស់កម្រិត HD។",
+    descriptionEn: "Premium AI-powered text-to-speech studio with voice cloning capabilities. Convert text to natural speech using built-in voices or clone your own voice.",
+    url: "https://text-to-speak-inky.vercel.app",
+    imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Ftext-to-speak-inky.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    logoUrl: "",
+    tags: ["AI", "Text to Speech", "Voice Cloning", "Audio Studio"],
+    githubUrl: "",
+    views: 2450,
+    likes: 188,
+    featured: true,
+    isTesting: true,
+    createdAt: "2026-08-20"
+  },
+  {
+    id: "app-any-image-to-vdo",
+    title: "CineCraft — Any Image to Video Studio",
+    category: "Tool",
+    description: "កម្មវិធីសម្រាប់បង្កើតវីដេអូពីរូបភាពយ៉ាងរហ័ស ជាមួយ Transitions ស្រស់ស្អាត, Timing, ដាក់អក្សរពីលើ, បញ្ចូលភ្លេង Background, និង Export ជាវីដេអូ HD។",
+    descriptionEn: "Turn your images into stunning videos with custom transitions, timing, text overlays, background music, and instant HD video export.",
+    url: "https://any-image-to-vdo.vercel.app",
+    imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fany-image-to-vdo.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    logoUrl: "",
+    tags: ["Image to Video", "Transitions", "Video Studio", "HD Export"],
+    githubUrl: "",
+    views: 2130,
+    likes: 145,
+    featured: true,
+    createdAt: "2026-08-22"
+  },
+  {
+    id: "app-group-image-by-color",
+    title: "ChromaGroup — RAW & Image Color Classifier",
+    category: "Tool",
+    description: "កម្មវិធីជំនួយការ Upload រូបភាព RAW និងស្តង់ដារ ដើម្បីបែងចែក Folders តាមកម្រិតពណ៌ និងទាញយកជាកញ្ចប់ ZIP ដោយស្វ័យប្រវត្តិ។",
+    descriptionEn: "Upload RAW and standard images, categorize them automatically by color intensity, view detailed color telemetry, and download organized ZIP packages.",
+    url: "https://group-image-by-color.vercel.app",
+    imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fgroup-image-by-color.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    logoUrl: "",
+    tags: ["Color Analysis", "RAW Image", "ZIP Export", "Automation"],
+    githubUrl: "",
+    views: 1640,
+    likes: 92,
+    featured: false,
+    createdAt: "2026-08-24"
+  },
+  {
+    id: "app-edite-photo",
+    title: "ChromaGrade — AI Color Grading Studio",
+    category: "Tool",
+    description: "កម្មវិធី AI Color Grading សម្រាប់យក Reference Color ពីផ្ទាំងគំរូ មកអនុវត្តលើរូបថតច្រើនសន្លឹកដោយស្វ័យប្រវត្តិ ជាមួយ Exposure Correction។",
+    descriptionEn: "Upload a color-graded reference image and apply its look intelligently to multiple photos with automatic exposure correction.",
+    url: "https://edite-photo.vercel.app",
+    imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fedite-photo.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    logoUrl: "",
+    tags: ["AI Color Grading", "Photo Editing", "Exposure AI", "Batch Process"],
+    githubUrl: "",
+    views: 1780,
+    likes: 110,
+    featured: false,
+    createdAt: "2026-08-25"
+  },
+  {
+    id: "app-cut-audio",
+    title: "Curt Audio — Breathing Sound Remover",
+    category: "Tool",
+    description: "កម្មវិធីស្កេន និងលុបសំឡេងដកដង្ហើម ឬសំឡេងរំខានចេញពីវីដេអូ និងសំឡេងដោយស្វ័យប្រវត្តិ ដើម្បីទទួលបាន Audio ស្អាត និងច្បាស់ល្អ។",
+    descriptionEn: "Upload a video, scan for breathing sounds, and export clean audio automatically.",
+    url: "https://cut-audio-khaki.vercel.app",
+    imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fcut-audio-khaki.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    logoUrl: "",
+    tags: ["Audio Cleaning", "Noise Reduction", "Breathing Remover", "Audio Tool"],
+    githubUrl: "",
+    views: 1420,
+    likes: 84,
+    featured: false,
+    isTesting: true,
+    createdAt: "2026-08-28"
+  },
+  {
+    id: "app-hightlight-vdo",
+    title: "Highlight VDO Creator",
+    category: "Tool",
+    description: "ឧបករណ៍កាត់ និងស្រង់យកចំណុច Highlight សំខាន់ៗនៃវីដេអូ ដើម្បីបង្កើតជា Short clips និង Reels យ៉ាងរហ័ស។",
+    descriptionEn: "Automated highlight video extraction tool for creating punchy shorts and viral clips.",
+    url: "https://hightlight-vdo.vercel.app",
+    imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fhightlight-vdo.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    logoUrl: "",
+    tags: ["Highlight Video", "Video Editor", "Short Clips", "Fast Export"],
+    githubUrl: "",
+    views: 1530,
+    likes: 76,
+    featured: false,
+    createdAt: "2026-08-29"
   }
 ];
 
@@ -303,7 +417,14 @@ function resolveKnownAppLogo(url = "", title = "") {
   if (str.includes("vdo-to-clip") || str.includes("vdoclip")) return "images/vdoclip_logo.svg";
   if (str.includes("khemvoen") || str.includes("វត្តខេមរវ័ន")) return "images/khemvoen_logo.png";
   if (str.includes("attenden") || str.includes("អវត្តមានថ្នាក់") || str.includes("student attendance")) return "images/attenden_logo.png";
-  if (str.includes("jobslak") || str.includes("ស្លាកលេខ") || str.includes("tag & location")) return "images/jobslak_logo.jpg";
+  if (str.includes("jobslak") || str.includes("jabslak") || str.includes("ស្លាកលេខ") || str.includes("tag & location")) return "images/jobslak_logo.jpg";
+  if (str.includes("bulk-post")) return "https://www.google.com/s2/favicons?domain=bulk-post.vercel.app&sz=256";
+  if (str.includes("text-to-speak") || str.includes("voicecraft")) return "https://www.google.com/s2/favicons?domain=text-to-speak-inky.vercel.app&sz=256";
+  if (str.includes("any-image-to-vdo") || str.includes("cinecraft")) return "https://www.google.com/s2/favicons?domain=any-image-to-vdo.vercel.app&sz=256";
+  if (str.includes("group-image-by-color") || str.includes("chromagroup")) return "https://www.google.com/s2/favicons?domain=group-image-by-color.vercel.app&sz=256";
+  if (str.includes("edite-photo") || str.includes("chromagrade")) return "https://www.google.com/s2/favicons?domain=edite-photo.vercel.app&sz=256";
+  if (str.includes("cut-audio")) return "https://www.google.com/s2/favicons?domain=cut-audio-khaki.vercel.app&sz=256";
+  if (str.includes("hightlight-vdo")) return "https://www.google.com/s2/favicons?domain=hightlight-vdo.vercel.app&sz=256";
   if (str.includes("neotrade")) return "images/neotrade_logo.svg";
   if (str.includes("omni")) return "images/omnistore_logo.svg";
 
@@ -822,6 +943,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // --- Data Operations ---
 function loadAppsData() {
   const keysToScan = [
+    "nexus_web_apps_v10",
     "nexus_web_apps_v9",
     "nexus_web_apps_v8",
     "nexus_web_apps_v7",
@@ -935,8 +1057,8 @@ function loadAppsData() {
 
 function saveAppsData() {
   const json = JSON.stringify(appsData);
+  localStorage.setItem("nexus_web_apps_v10", json);
   localStorage.setItem("nexus_web_apps_v9", json);
-  localStorage.setItem("nexus_web_apps_v8", json);
   localStorage.setItem("nexus_web_apps", json);
 }
 
