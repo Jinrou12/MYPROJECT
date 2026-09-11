@@ -5,6 +5,38 @@
 // --- Pre-loaded Starter Web Apps Data ---
 const DEFAULT_APPS = [
   {
+    id: "app-chabslak",
+    title: "Chabslak",
+    category: "Web",
+    description: "Chabslak — Web Application deployed on Vercel.",
+    descriptionEn: "Chabslak — Web Application deployed on Vercel.",
+    url: "https://chabslak-empier-and-fire.vercel.app",
+    imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fchabslak-empier-and-fire.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    logoUrl: "https://www.google.com/s2/favicons?domain=https%3A%2F%2Fchabslak-empier-and-fire.vercel.app&sz=256",
+    tags: ["Vercel", category, "Web App"],
+    githubUrl: "",
+    views: 100,
+    likes: 5,
+    featured: false,
+    createdAt: new Date().toISOString().split('T')[0]
+  },
+  {
+    id: "app-resize-vdo-oo25",
+    title: "Resize Vdo Oo25",
+    category: "Tool",
+    description: "Resize Vdo Oo25 — Web Application deployed on Vercel.",
+    descriptionEn: "Resize Vdo Oo25 — Web Application deployed on Vercel.",
+    url: "https://resize-vdo-oo25.vercel.app",
+    imageUrl: "https://api.microlink.io/?url=https%3A%2F%2Fresize-vdo-oo25.vercel.app&screenshot=true&meta=false&embed=screenshot.url",
+    logoUrl: "https://www.google.com/s2/favicons?domain=https%3A%2F%2Fresize-vdo-oo25.vercel.app&sz=256",
+    tags: ["Vercel", category, "Web App"],
+    githubUrl: "",
+    views: 100,
+    likes: 5,
+    featured: false,
+    createdAt: new Date().toISOString().split('T')[0]
+  },
+  {
     id: "app-jobslak",
     title: "ប្រព័ន្ធគ្រប់គ្រងស្លាកលេខ និងទីតាំង (Tag & Location Manager)",
     category: "Web",
