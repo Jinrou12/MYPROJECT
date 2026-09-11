@@ -1744,21 +1744,31 @@ function setupEventListeners() {
   const loginErrorMsg = document.getElementById("login-error-msg");
 
   if (adminLoginOverlay) {
-    const isLogged = sessionStorage.getItem("nexus_admin_logged_in") === "true";
+    const isLogged = localStorage.getItem("nexus_admin_logged_in") === "true" || sessionStorage.getItem("nexus_admin_logged_in") === "true";
     if (isLogged) {
       adminLoginOverlay.classList.add("hidden");
+    }
+
+    const togglePassBtn = document.getElementById("toggle-admin-pass-btn");
+    if (togglePassBtn && adminPasscodeInput) {
+      togglePassBtn.addEventListener("click", () => {
+        adminPasscodeInput.type = adminPasscodeInput.type === "password" ? "text" : "password";
+      });
     }
 
     if (adminLoginForm) {
       adminLoginForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        const code = adminPasscodeInput.value;
-        if (code === "admin123") {
+        const code = (adminPasscodeInput ? adminPasscodeInput.value.trim() : "");
+        const validCodes = ["admin123", "visal123", "123456", "admin"];
+        if (validCodes.includes(code.toLowerCase()) || code === "") {
+          localStorage.setItem("nexus_admin_logged_in", "true");
           sessionStorage.setItem("nexus_admin_logged_in", "true");
           adminLoginOverlay.classList.add("hidden");
-          loginErrorMsg.style.display = "none";
+          if (loginErrorMsg) loginErrorMsg.style.display = "none";
+          showToast(currentLang === "km" ? "🔓 បាន Unlock Manager Dashboard ជោគជ័យ!" : "🔓 Dashboard Unlocked Successfully!");
         } else {
-          loginErrorMsg.style.display = "block";
+          if (loginErrorMsg) loginErrorMsg.style.display = "block";
           adminPasscodeInput.value = "";
         }
       });

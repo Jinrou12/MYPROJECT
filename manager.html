@@ -28,12 +28,20 @@
       <p style="color: var(--text-muted); font-size: 0.9rem;">Please enter admin passcode</p>
       
       <form id="admin-login-form">
-        <input type="password" id="admin-passcode" class="form-control" placeholder="••••••••" required>
+        <div style="position: relative; margin-bottom: 0.8rem;">
+          <input type="password" id="admin-passcode" class="form-control" placeholder="Passcode (admin123)" value="admin123" required style="padding-right: 42px;">
+          <button type="button" id="toggle-admin-pass-btn" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center;" title="Show/Hide">
+            <i data-lucide="eye" style="width: 18px; height: 18px;"></i>
+          </button>
+        </div>
         <button type="submit" class="btn btn-primary" style="width: 100%;">
           <i data-lucide="unlock"></i> Unlock Dashboard
         </button>
       </form>
-      <div id="login-error-msg" style="color: var(--accent-pink); margin-top: 1rem; display: none; font-size: 0.85rem;">Incorrect passcode!</div>
+      <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim); text-align: center;">
+        🔑 Passcode: <span style="color: var(--primary-cyan); font-weight: 700; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('admin-passcode').value='admin123'; document.getElementById('admin-login-form').requestSubmit();">admin123</span> (ចុចទីនេះដើម្បី Unlock ភ្លាមៗ)
+      </div>
+      <div id="login-error-msg" style="color: var(--accent-pink); margin-top: 0.8rem; display: none; font-size: 0.85rem;">Incorrect passcode! Passcode ត្រឹមត្រូវគឺ: admin123</div>
     </div>
   </div>
 
