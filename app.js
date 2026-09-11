@@ -405,6 +405,35 @@ let mgrActiveCategory = "All";
 let searchQuery = "";
 let sortBy = "featured";
 
+// --- Pinned Tools System ---
+function loadPinnedApps() {
+  try {
+    const raw = localStorage.getItem("nexus_pinned_apps");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {
+    console.warn("Error loading pinned apps", e);
+  }
+  return ["app-bulk-poster", "app-vdo-to-clip", "app-jobslak"];
+}
+
+let pinnedAppIds = new Set(loadPinnedApps());
+
+function savePinnedApps() {
+  try {
+    localStorage.setItem("nexus_pinned_apps", JSON.stringify(Array.from(pinnedAppIds)));
+  } catch (e) {
+    console.warn("Error saving pinned apps", e);
+  }
+}
+
+function isAppPinned(id) {
+  return pinnedAppIds.has(id);
+}
+
+
 // --- Known Real Web Apps Logo & Banner Catalog ---
 function resolveKnownAppLogo(url = "", title = "") {
   const str = ((url || "") + " " + (title || "")).toLowerCase();
@@ -716,9 +745,16 @@ function renderManagerCategories() {
 
   if (containers.length === 0) return;
 
+  const pinnedCount = pinnedAppIds.size;
   const html = CATEGORIES.map(cat => {
     const isActive = cat === mgrActiveCategory ? 'active' : '';
-    const label = cat === 'All' ? (currentLang === 'km' ? 'ទាំងអស់ (All)' : 'All Apps') : cat;
+    let label = cat;
+    if (cat === 'All') {
+      label = currentLang === 'km' ? 'ទាំងអស់ (All)' : 'All Apps';
+    } else if (cat === 'Pinned') {
+      const pinText = currentLang === 'km' ? '📌 Pinned' : '📌 Pinned';
+      label = `${pinText}${pinnedCount > 0 ? ` <span class="cat-count-badge">${pinnedCount}</span>` : ''}`;
+    }
     return `<button class="cat-btn ${isActive}" data-mgr-cat="${cat}">${label}</button>`;
   }).join('');
 
@@ -728,7 +764,7 @@ function renderManagerCategories() {
 
   document.querySelectorAll("[data-mgr-cat]").forEach(btn => {
     btn.addEventListener("click", (e) => {
-      mgrActiveCategory = e.target.dataset.mgrCat;
+      mgrActiveCategory = e.currentTarget.dataset.mgrCat || e.target.dataset.mgrCat;
       renderManagerCategories();
       renderManagerTable();
     });
@@ -747,7 +783,14 @@ function renderManagerTable() {
   const query = (viewSearchInput ? viewSearchInput.value : (mgrSearchInput ? mgrSearchInput.value : "")).toLowerCase().trim();
 
   let list = appsData.filter(app => {
-    const matchesCat = mgrActiveCategory === "All" || app.category === mgrActiveCategory;
+    let matchesCat = false;
+    if (mgrActiveCategory === "All") {
+      matchesCat = true;
+    } else if (mgrActiveCategory === "Pinned") {
+      matchesCat = isAppPinned(app.id);
+    } else {
+      matchesCat = app.category === mgrActiveCategory;
+    }
     const matchesSearch = !query || 
       app.title.toLowerCase().includes(query) ||
       app.category.toLowerCase().includes(query) ||
@@ -755,8 +798,12 @@ function renderManagerTable() {
     return matchesCat && matchesSearch;
   });
 
-  // Keep custom user-added apps prominently at the top of the manager table
+  // Keep Pinned and custom user-added apps prominently at the top of the manager table
   list.sort((a, b) => {
+    const aPinned = isAppPinned(a.id) ? 1 : 0;
+    const bPinned = isAppPinned(b.id) ? 1 : 0;
+    if (aPinned !== bPinned) return bPinned - aPinned;
+
     const aCustom = a.id && !DEFAULT_APP_IDS.has(a.id);
     const bCustom = b.id && !DEFAULT_APP_IDS.has(b.id);
     if (aCustom && !bCustom) return -1;
@@ -806,6 +853,11 @@ function renderManagerTable() {
     const bannerSourcesJson = JSON.stringify(bannerSources).replace(/"/g, '&quot;');
     const mainImage = bannerSources[0] || 'images/jobslak_banner.png';
 
+    const isPinned = isAppPinned(app.id);
+    const pinBtn = isPinned 
+      ? `<button class="btn btn-secondary btn-icon-sm toggle-pin-btn active" data-id="${app.id}" title="${currentLang === 'km' ? 'ដោះ Pin' : 'Unpin App'}" style="color: var(--primary-cyan); background: rgba(0,242,254,0.15); border-color: rgba(0,242,254,0.5);"><i data-lucide="pin" style="fill: var(--primary-cyan); width: 14px; height: 14px;"></i></button>`
+      : `<button class="btn btn-secondary btn-icon-sm toggle-pin-btn" data-id="${app.id}" title="${currentLang === 'km' ? 'Pin ទុកប្រើច្រើន (Pin to Top)' : 'Pin App to Top'}" style="color: var(--text-dim);"><i data-lucide="pin" style="width: 14px; height: 14px;"></i></button>`;
+
     const featuredStar = app.featured 
       ? `<button class="btn btn-secondary btn-icon-sm toggle-featured-btn" data-id="${app.id}" title="Unmark Featured" style="color: var(--accent-amber);"><i data-lucide="star"></i></button>`
       : `<button class="btn btn-secondary btn-icon-sm toggle-featured-btn" data-id="${app.id}" title="Mark Featured" style="color: var(--text-dim);"><i data-lucide="star"></i></button>`;
@@ -822,6 +874,7 @@ function renderManagerTable() {
               <div style="font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
                 <img src="${logoSources[0] || ''}" class="title-inline-favicon" alt="${app.title}" data-domain="${domain}" data-logo-sources="${logoSourcesJson}" data-source-idx="0" onerror="handleLogoError(this, '${domain}')">
                 <span>${app.title}</span>
+                ${isPinned ? '<span class="pinned-tag" style="position: static; padding: 2px 6px; font-size: 0.65rem;"><i data-lucide="pin" style="width: 10px; height: 10px;"></i> Pin</span>' : ''}
               </div>
               <div class="table-url-link-row">
                 <i data-lucide="link-2" style="width: 12px; height: 12px; color: var(--primary-cyan); flex-shrink: 0;"></i>
@@ -840,6 +893,7 @@ function renderManagerTable() {
         </td>
         <td>
           <div class="table-action-btns">
+            ${pinBtn}
             ${featuredStar}
             <button class="btn btn-secondary btn-icon-sm preview-mgr-btn" data-id="${app.id}" title="Preview Sandbox"><i data-lucide="eye"></i></button>
             <button class="btn btn-secondary btn-icon-sm edit-mgr-btn" data-id="${app.id}" title="Edit Web App"><i data-lucide="edit-3"></i></button>
@@ -857,6 +911,10 @@ function renderManagerTable() {
   if (window.lucide) lucide.createIcons();
 
   // Action Handlers inside table
+  document.querySelectorAll(".toggle-pin-btn").forEach(b => {
+    b.addEventListener("click", () => handleTogglePin(b.dataset.id));
+  });
+
   document.querySelectorAll(".toggle-featured-btn").forEach(b => {
     b.addEventListener("click", () => handleToggleFeatured(b.dataset.id));
   });
@@ -1063,19 +1121,26 @@ function saveAppsData() {
 }
 
 // --- Categories Setup ---
-const CATEGORIES = ["All", "APP", "Web", "Tool"];
+const CATEGORIES = ["All", "Pinned", "Tool", "Web", "APP"];
 
 function renderCategories() {
   if (!categoriesContainer) return;
+  const pinnedCount = pinnedAppIds.size;
   categoriesContainer.innerHTML = CATEGORIES.map(cat => {
     const isActive = cat === activeCategory ? 'active' : '';
-    const label = cat === 'All' ? (currentLang === 'km' ? 'ទាំងអស់ (All)' : 'All Apps') : cat;
+    let label = cat;
+    if (cat === 'All') {
+      label = currentLang === 'km' ? 'ទាំងអស់ (All)' : 'All Apps';
+    } else if (cat === 'Pinned') {
+      const pinText = currentLang === 'km' ? '📌 Pinned (ប្រើច្រើន)' : '📌 Pinned Tools';
+      label = `${pinText}${pinnedCount > 0 ? ` <span class="cat-count-badge">${pinnedCount}</span>` : ''}`;
+    }
     return `<button class="cat-btn ${isActive}" data-category="${cat}">${label}</button>`;
   }).join('');
 
   document.querySelectorAll(".cat-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
-      activeCategory = e.target.dataset.category;
+      activeCategory = e.currentTarget.dataset.category || e.target.dataset.category;
       renderCategories();
       renderApps();
     });
@@ -1086,7 +1151,15 @@ function renderCategories() {
 function renderApps() {
   if (!appsGrid) return;
   let filtered = appsData.filter(app => {
-    const matchesCat = activeCategory === "All" || app.category === activeCategory;
+    let matchesCat = false;
+    if (activeCategory === "All") {
+      matchesCat = true;
+    } else if (activeCategory === "Pinned") {
+      matchesCat = isAppPinned(app.id);
+    } else {
+      matchesCat = app.category === activeCategory;
+    }
+
     const q = searchQuery.toLowerCase();
     const matchesSearch = !q || 
       app.title.toLowerCase().includes(q) ||
@@ -1099,6 +1172,11 @@ function renderApps() {
 
   // Sorting
   filtered.sort((a, b) => {
+    // 1. PINNED APPS ALWAYS RANK HIGHEST AT THE VERY TOP!
+    const aPinned = isAppPinned(a.id) ? 1 : 0;
+    const bPinned = isAppPinned(b.id) ? 1 : 0;
+    if (aPinned !== bPinned) return bPinned - aPinned;
+
     if (sortBy === "recent") return new Date(b.createdAt) - new Date(a.createdAt);
     if (sortBy === "views") return b.views - a.views;
     if (sortBy === "likes") return b.likes - a.likes;
@@ -1117,12 +1195,18 @@ function renderApps() {
   });
 
   if (filtered.length === 0) {
-    const emptyText = TRANSLATIONS[currentLang].empty_title;
+    const emptyText = activeCategory === "Pinned"
+      ? (currentLang === 'km' ? "មិនទាន់មាន Web App ត្រូវបាន Pin នៅឡើយទេ" : "No Pinned Web Apps yet")
+      : TRANSLATIONS[currentLang].empty_title;
+    const emptySub = activeCategory === "Pinned"
+      ? (currentLang === 'km' ? "សូមចុចលើ icon 📌 នៅលើ Web App ណាដែលបងប្រើញឹកញាប់ ដើម្បី Pin វាឡើងមកលើគេបង្អស់!" : "Click the 📌 icon on any web tool you use frequently to pin it to the top!")
+      : (currentLang === 'km' ? "សូមព្យាយាមស្វែងរកជាមួយ Keyword ផ្សេង ឬជ្រើសរើសប្រភេទផ្សេង។" : "Try searching with different keywords or select another category.");
+
     appsGrid.innerHTML = `
       <div class="empty-state">
-        <div class="empty-icon"><i data-lucide="layers-slash"></i></div>
+        <div class="empty-icon"><i data-lucide="${activeCategory === 'Pinned' ? 'pin' : 'layers-slash'}"></i></div>
         <h3>${emptyText}</h3>
-        <p style="color: var(--text-muted); margin-top: 0.5rem;">សូមព្យាយាមស្វែងរកជាមួយ Keyword ផ្សេង ឬជ្រើសរើសប្រភេទផ្សេង។</p>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">${emptySub}</p>
       </div>
     `;
     if (window.lucide) lucide.createIcons();
@@ -1131,6 +1215,10 @@ function renderApps() {
 
   appsGrid.innerHTML = filtered.map(app => {
     const descriptionText = (currentLang === 'en' && app.descriptionEn) ? app.descriptionEn : app.description;
+    const isPinned = isAppPinned(app.id);
+    const pinnedBadge = isPinned 
+      ? `<span class="pinned-tag" data-id="${app.id}" title="${currentLang === 'km' ? 'បាន Pin (ចុចដើម្បីដោះ Pin)' : 'Pinned App (Click to Unpin)'}"><i data-lucide="pin" style="width: 12px; height: 12px; stroke-width: 2.5;"></i> Pinned</span>` 
+      : '';
     const featuredBadge = app.featured ? `<span class="featured-tag">★ Featured</span>` : '';
     const testingBadge = app.isTesting ? `<span class="testing-tag" style="position: absolute; top: 12px; left: 12px; background: rgba(245, 158, 11, 0.9); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; z-index: 10; border: 1px solid rgba(255, 255, 255, 0.3);"><i data-lucide="flask-conical" style="width: 12px; height: 12px; display: inline-block; vertical-align: -2px; margin-right: 4px;"></i>Beta Test</span>` : '';
     const tagsHtml = app.tags.map(t => `<span class="tech-tag">${t}</span>`).join('');
@@ -1147,9 +1235,10 @@ function renderApps() {
     const cardImage = bannerSources[0] || (app.url ? screenshotSources[0] : 'images/resizvdo_banner.jpg');
 
     return `
-      <article class="app-card" data-id="${app.id}">
+      <article class="app-card ${isPinned ? 'is-pinned' : ''}" data-id="${app.id}">
         <div class="app-thumbnail" data-id="${app.id}" style="cursor: pointer; position: relative;" title="Click to open ${app.title}">
           ${testingBadge}
+          ${pinnedBadge}
           <img src="${cardImage}" alt="${app.title}" loading="lazy" data-domain="${domain}" data-banner-sources="${bannerSourcesJson}" data-banner-source-idx="0" onerror="handleBannerError(this)">
           <div class="thumbnail-overlay">
             <span class="badge-cat">${app.category}</span>
@@ -1184,6 +1273,9 @@ function renderApps() {
             </div>
 
             <div class="action-btns">
+              <button class="btn btn-secondary btn-icon-only pin-btn ${isPinned ? 'pinned active' : ''}" data-id="${app.id}" title="${isPinned ? (currentLang === 'km' ? 'ដោះ Pin' : 'Unpin App') : (currentLang === 'km' ? 'Pin ទុកប្រើញឹកញាប់ (Pin to Top)' : 'Pin to Top')}">
+                <i data-lucide="pin" style="width: 15px; height: 15px;"></i>
+              </button>
               <button class="btn btn-secondary btn-icon-only like-btn" data-id="${app.id}" title="Like App">
                 <i data-lucide="heart" style="width: 16px; height: 16px;"></i>
               </button>
@@ -1203,6 +1295,9 @@ function renderApps() {
   // Attach card event handlers
   document.querySelectorAll(".open-preview-btn, .app-thumbnail").forEach(btn => {
     btn.addEventListener("click", (e) => {
+      // Don't open preview if clicking the pinned tag
+      if (e.target.closest('.pinned-tag')) return;
+
       const id = btn.dataset.id;
       const app = appsData.find(a => a.id === id);
       if (app && app.url) {
@@ -1222,8 +1317,17 @@ function renderApps() {
 
   document.querySelectorAll(".like-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
+      e.stopPropagation();
       const id = btn.dataset.id;
       handleLikeApp(id);
+    });
+  });
+
+  document.querySelectorAll(".pin-btn, .pinned-tag").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      handleTogglePin(id);
     });
   });
 }
@@ -1887,6 +1991,30 @@ function handleLikeApp(id) {
     renderApps();
     showToast(currentLang === 'km' ? `អ្នកបានចូលចិត្ត "${app.title}"` : `Liked "${app.title}"`);
   }
+}
+
+// --- Handle Pin / Unpin Web App ---
+function handleTogglePin(id) {
+  const app = appsData.find(a => a.id === id);
+  if (!app) return;
+
+  const pinned = isAppPinned(id);
+  if (pinned) {
+    pinnedAppIds.delete(id);
+    app.isPinned = false;
+    showToast(currentLang === 'km' ? `បានដោះ Pin "${app.title}"` : `Unpinned "${app.title}"`);
+  } else {
+    pinnedAppIds.add(id);
+    app.isPinned = true;
+    showToast(currentLang === 'km' ? `📌 បាន Pin "${app.title}" ទៅលើគេបង្អស់!` : `📌 Pinned "${app.title}" to Top!`);
+  }
+
+  savePinnedApps();
+  saveAppsData();
+  renderCategories();
+  renderApps();
+  renderManagerCategories();
+  renderManagerTable();
 }
 
 // --- Stats Counter Update ---

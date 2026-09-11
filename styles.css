@@ -1674,6 +1674,94 @@ footer {
   letter-spacing: 2px;
 }
 
+/* ==========================================================================
+   PINNED WEB APPS / TOOLS FEATURE STYLES
+   ========================================================================== */
+
+.app-card.is-pinned {
+  border-color: rgba(0, 242, 254, 0.55);
+  box-shadow: 0 12px 35px -10px rgba(0, 242, 254, 0.35);
+  position: relative;
+}
+
+.app-card.is-pinned::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--grad-cyan-blue);
+  z-index: 12;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.8);
+}
+
+.pinned-tag {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: linear-gradient(135deg, #00f2fe 0%, #38bdf8 100%);
+  color: #050b14;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.22rem 0.6rem;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 14px rgba(0, 242, 254, 0.7);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 11;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pinned-tag:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.9);
+}
+
+.pin-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.pin-btn:hover {
+  color: var(--primary-cyan) !important;
+  border-color: rgba(0, 242, 254, 0.45) !important;
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+}
+
+.pin-btn.pinned,
+.pin-btn.active {
+  background: rgba(0, 242, 254, 0.18) !important;
+  color: var(--primary-cyan) !important;
+  border-color: rgba(0, 242, 254, 0.6) !important;
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.45) !important;
+}
+
+.pin-btn.pinned svg,
+.pin-btn.active svg {
+  stroke: var(--primary-cyan);
+  fill: rgba(0, 242, 254, 0.4);
+  transform: rotate(-30deg);
+  transition: transform 0.25s ease;
+}
+
+.cat-count-badge {
+  display: inline-block;
+  background: var(--primary-cyan);
+  color: #050b14;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-left: 5px;
+  vertical-align: 1px;
+}
+
+
 
 
 
