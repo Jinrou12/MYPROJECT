@@ -845,15 +845,11 @@ function renderManagerCategories() {
 
   if (containers.length === 0) return;
 
-  const pinnedCount = pinnedAppIds.size;
   const html = CATEGORIES.map(cat => {
     const isActive = cat === mgrActiveCategory ? 'active' : '';
     let label = cat;
     if (cat === 'All') {
       label = currentLang === 'km' ? 'ទាំងអស់ (All)' : 'All Apps';
-    } else if (cat === 'Pinned') {
-      const pinText = currentLang === 'km' ? '📌 Pinned' : '📌 Pinned';
-      label = `${pinText}${pinnedCount > 0 ? ` <span class="cat-count-badge">${pinnedCount}</span>` : ''}`;
     }
     return `<button class="cat-btn ${isActive}" data-mgr-cat="${cat}">${label}</button>`;
   }).join('');
@@ -1344,19 +1340,15 @@ function saveAppsData() {
 }
 
 // --- Categories Setup ---
-const CATEGORIES = ["All", "Pinned", "Tool", "Web", "APP"];
+const CATEGORIES = ["All", "Tool", "Web", "APP"];
 
 function renderCategories() {
   if (!categoriesContainer) return;
-  const pinnedCount = pinnedAppIds.size;
   categoriesContainer.innerHTML = CATEGORIES.map(cat => {
     const isActive = cat === activeCategory ? 'active' : '';
     let label = cat;
     if (cat === 'All') {
       label = currentLang === 'km' ? 'ទាំងអស់ (All)' : 'All Apps';
-    } else if (cat === 'Pinned') {
-      const pinText = currentLang === 'km' ? '📌 Pinned (ប្រើច្រើន)' : '📌 Pinned Tools';
-      label = `${pinText}${pinnedCount > 0 ? ` <span class="cat-count-badge">${pinnedCount}</span>` : ''}`;
     }
     return `<button class="cat-btn ${isActive}" data-category="${cat}">${label}</button>`;
   }).join('');
