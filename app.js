@@ -1043,24 +1043,113 @@ function handleToggleFeatured(id) {
   }
 }
 
-function handleDeleteApp(id) {
+function getVercelProjectName(app) {
+  if (!app) return '';
+  if (app.name && app.name !== 'myproject') return app.name;
+  if (app.id && app.id.startsWith('app-')) {
+    const rawId = app.id.replace(/^app-/, '');
+    if (isNaN(rawId)) return rawId;
+  }
+  if (app.url && app.url.includes('.vercel.app')) {
+    try {
+      let cleanUrl = app.url.startsWith('http') ? app.url : 'https://' + app.url;
+      const hostname = new URL(cleanUrl).hostname;
+      return hostname.replace('.vercel.app', '').split('.')[0];
+    } catch (e) {
+      return '';
+    }
+  }
+  return '';
+}
+
+async function deleteProjectFromVercel(projectName) {
+  if (!projectName) throw new Error('No project name found');
+  const token = getStoredVercelToken();
+
+  // Try serverless DELETE endpoint first
+  try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`/api/projects?name=${encodeURIComponent(projectName)}`, {
+      method: 'DELETE',
+      headers
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (e) {
+    console.log('Serverless DELETE failed, falling back to direct API');
+  }
+
+  // Fallback to direct Vercel REST API
+  if (token) {
+    const directUrl = `https://api.vercel.com/v9/projects/${encodeURIComponent(projectName)}?teamId=${VERCEL_TEAM_ID}`;
+    const directRes = await fetch(directUrl, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!directRes.ok && directRes.status !== 404) {
+      const errText = await directRes.text();
+      throw new Error(errText || 'Failed to delete on Vercel');
+    }
+    return { success: true };
+  }
+
+  throw new Error('Vercel Token required to delete on cloud');
+}
+
+function openDeleteModal(id) {
   const app = appsData.find(a => a.id === id);
   if (!app) return;
-  const msg = currentLang === 'km' 
-    ? `តើអ្នកពិតជាចង់លុប "${app.title}" ចេញមែនទេ?\n(ប្រព័ន្ធនឹងចងចាំ ហើយមិន Sync ឬបង្ហាញគម្រោងនេះឡើងវិញឡើយ)` 
-    : `Are you sure you want to delete "${app.title}"?\n(It will be permanently excluded and will not re-sync)`;
 
-  if (confirm(msg)) {
-    markAppAsDeleted(app);
-    appsData = appsData.filter(a => a.id !== id);
-    saveAppsData();
-    updateStats();
-    renderCategories();
-    renderApps();
-    renderManagerCategories();
-    renderManagerTable();
-    showToast(currentLang === 'km' ? `បានលុប "${app.title}" ជាអចិន្ត្រៃយ៍ជោគជ័យ!` : `"${app.title}" deleted permanently!`);
+  const modal = document.getElementById("delete-confirm-modal");
+  if (!modal) {
+    if (confirm(currentLang === 'km' ? `តើអ្នកពិតជាចង់លុប "${app.title}" ចេញមែនទេ?` : `Delete "${app.title}"?`)) {
+      markAppAsDeleted(app);
+      appsData = appsData.filter(a => a.id !== id);
+      saveAppsData();
+      updateStats();
+      renderApps();
+      renderManagerTable();
+    }
+    return;
   }
+
+  const idInput = document.getElementById("delete-target-id");
+  const nameInput = document.getElementById("delete-target-name");
+  const titleEl = document.getElementById("delete-modal-app-title");
+  const urlEl = document.getElementById("delete-modal-app-url");
+  const logoEl = document.getElementById("delete-modal-app-logo");
+  const vercelCheckbox = document.getElementById("delete-from-vercel-checkbox");
+
+  const vName = getVercelProjectName(app);
+  if (idInput) idInput.value = app.id;
+  if (nameInput) nameInput.value = vName;
+  if (titleEl) titleEl.textContent = app.title;
+  if (urlEl) urlEl.textContent = app.url || 'No URL';
+
+  const logoSources = getLogoSources(app.url, 128, app.logoUrl, app.title);
+  if (logoEl) logoEl.src = logoSources[0] || 'favicon.svg';
+
+  const hasToken = !!getStoredVercelToken();
+  if (vercelCheckbox) {
+    vercelCheckbox.checked = hasToken && !!vName;
+    vercelCheckbox.disabled = !hasToken || !vName;
+    const parentLabel = vercelCheckbox.closest('label');
+    if (parentLabel) {
+      parentLabel.style.opacity = (!hasToken || !vName) ? '0.6' : '1';
+    }
+  }
+
+  openModal(modal);
+}
+
+function handleDeleteApp(id) {
+  openDeleteModal(id);
 }
 
 function openEditModal(id) {
@@ -2023,6 +2112,73 @@ function setupEventListeners() {
       if (e.target === overlay) closeModal(overlay);
     });
   });
+
+  // Delete Confirmation Modal Listeners
+  const cancelDeleteBtn = document.getElementById("cancel-delete-btn");
+  const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+  const deleteConfirmModal = document.getElementById("delete-confirm-modal");
+
+  if (cancelDeleteBtn && deleteConfirmModal) {
+    cancelDeleteBtn.addEventListener("click", () => closeModal(deleteConfirmModal));
+  }
+
+  if (confirmDeleteBtn && deleteConfirmModal) {
+    confirmDeleteBtn.addEventListener("click", async () => {
+      const idInput = document.getElementById("delete-target-id");
+      const nameInput = document.getElementById("delete-target-name");
+      const vercelCheck = document.getElementById("delete-from-vercel-checkbox");
+
+      const id = idInput ? idInput.value : "";
+      const vName = nameInput ? nameInput.value : "";
+      const deleteFromVercel = vercelCheck ? vercelCheck.checked : false;
+
+      const app = appsData.find(a => a.id === id);
+      if (!app) {
+        closeModal(deleteConfirmModal);
+        return;
+      }
+
+      const btnLabel = document.getElementById("delete-btn-label");
+      const btnIcon = document.getElementById("delete-btn-icon");
+      const origLabel = btnLabel ? btnLabel.textContent : "Confirm Delete";
+
+      if (deleteFromVercel && vName) {
+        if (btnLabel) btnLabel.textContent = "កំពុងលុបពី Vercel Cloud...";
+        if (btnIcon) btnIcon.classList.add("spinning");
+        confirmDeleteBtn.disabled = true;
+
+        try {
+          await deleteProjectFromVercel(vName);
+          showToast(currentLang === 'km' 
+            ? `🎉 បានលុប "${app.title}" (${vName}) ចេញពី Vercel Cloud និង Web ជោគជ័យ!` 
+            : `🎉 Deleted "${app.title}" from Vercel Cloud and Web!`);
+        } catch (err) {
+          console.warn("Vercel delete error:", err);
+          showToast(currentLang === 'km' 
+            ? `⚠️ បានលុបពី Web (Vercel: ${err.message})` 
+            : `⚠️ Removed from Web (Vercel: ${err.message})`);
+        } finally {
+          if (btnLabel) btnLabel.textContent = origLabel;
+          if (btnIcon) btnIcon.classList.remove("spinning");
+          confirmDeleteBtn.disabled = false;
+        }
+      } else {
+        showToast(currentLang === 'km' 
+          ? `🗑️ បានលុប "${app.title}" ចេញពី Web Showcase ជោគជ័យ!` 
+          : `🗑️ Removed "${app.title}" from Web Showcase!`);
+      }
+
+      markAppAsDeleted(app);
+      appsData = appsData.filter(a => a.id !== id);
+      saveAppsData();
+      updateStats();
+      renderCategories();
+      renderApps();
+      renderManagerCategories();
+      renderManagerTable();
+      closeModal(deleteConfirmModal);
+    });
+  }
 
   // Language Toggle
   if (langToggleBtn) {

@@ -1,6 +1,6 @@
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
@@ -22,6 +22,50 @@ module.exports = async (req, res) => {
       message: 'No Vercel Token provided. Set VERCEL_API_TOKEN in Vercel settings or enter it in the Manager Panel.',
       projects: []
     });
+  }
+
+  // Handle DELETE request to delete a project from Vercel
+  if (req.method === 'DELETE') {
+    let projectName = req.query.name || req.query.projectId;
+    if (!projectName && req.body) {
+      try {
+        const parsedBody = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+        projectName = parsedBody.name || parsedBody.projectName || parsedBody.projectId;
+      } catch (e) {}
+    }
+
+    if (!projectName) {
+      return res.status(400).json({ success: false, error: 'Project name or ID is required.' });
+    }
+
+    // Safety guard: prevent deleting the showcase app itself!
+    const cleanName = projectName.toLowerCase().trim();
+    if (cleanName === 'myproject' || cleanName === 'visalproject' || cleanName === 'prj_oqxq3vhxfkbexr8pmdaxjgeug6pa') {
+      return res.status(400).json({ success: false, error: 'Cannot delete the showcase application itself!' });
+    }
+
+    try {
+      const deleteUrl = `https://api.vercel.com/v9/projects/${encodeURIComponent(projectName)}?teamId=${teamId}`;
+      const delResponse = await fetch(deleteUrl, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!delResponse.ok) {
+        const errText = await delResponse.text();
+        return res.status(delResponse.status).json({ success: false, error: errText });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: `Project ${projectName} deleted successfully from Vercel.`,
+        projectName
+      });
+    } catch (delErr) {
+      return res.status(500).json({ success: false, error: delErr.message });
+    }
   }
 
   try {
