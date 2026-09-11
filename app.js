@@ -37,16 +37,16 @@ const DEFAULT_APPS = [
     createdAt: new Date().toISOString().split('T')[0]
   },
   {
-    id: "app-jobslak",
+    id: "app-jabslak",
     title: "ប្រព័ន្ធគ្រប់គ្រងស្លាកលេខ និងទីតាំង (Tag & Location Manager)",
     category: "Web",
     description: "ប្រព័ន្ធគ្រប់គ្រងស្លាកលេខ និងទីតាំងស្នាក់នៅ (Tag & Location Manager) គឺជា Web App ទំនើបសម្រាប់គ្រប់គ្រងបញ្ជីឈ្មោះ ទីតាំង និងត្រួតពិនិត្យវត្តមាន Real-time។ គាំទ្រ ផែនទីវត្តអន្តរកម្ម (Interactive Map), គ្រីសវត្តមាន, ស្កែន QR Code, និងការនាំចូល/ចេញទិន្នន័យជា Excel, CSV, PDF យ៉ាងរហ័ស។",
     descriptionEn: "Tag & Location Manager is an advanced Web Application for managing attendee lists, location tags, and real-time attendance check-ins. Features interactive satellite temple maps, QR code tagging, real-time analytics, and seamless Excel/CSV/PDF bulk import & export.",
-    url: "https://jobslak.vercel.app/",
+    url: "https://jabslak.vercel.app/",
     imageUrl: "images/jobslak_banner.png",
     logoUrl: "images/jobslak_logo.jpg",
     tags: ["Web App", "Interactive Map", "QR Code", "Attendance", "Excel Import"],
-    githubUrl: "https://github.com/visal/jobslak",
+    githubUrl: "https://github.com/visal/jabslak",
     views: 3627,
     likes: 184,
     featured: true,
@@ -448,10 +448,15 @@ function loadPinnedApps() {
   } catch (e) {
     console.warn("Error loading pinned apps", e);
   }
-  return ["app-bulk-poster", "app-vdo-to-clip", "app-jobslak"];
+  return ["app-bulk-poster", "app-vdo-to-clip", "app-jabslak"];
 }
 
 let pinnedAppIds = new Set(loadPinnedApps());
+if (pinnedAppIds.has("app-jobslak")) {
+  pinnedAppIds.delete("app-jobslak");
+  pinnedAppIds.add("app-jabslak");
+  savePinnedApps();
+}
 
 function savePinnedApps() {
   try {
@@ -1142,6 +1147,29 @@ function loadAppsData() {
 
   // User custom apps stay in front, official apps follow
   appsData = [...userCustomApps, ...officialApps];
+
+  // Purge any old 'jobslak' and migrate to real 'https://jabslak.vercel.app/'
+  appsData.forEach(app => {
+    if (!app) return;
+    if (app.id === 'app-jobslak' || app.id === 'app-jabslak' || (app.url && app.url.includes('jobslak.vercel.app')) || (app.url && app.url.includes('jabslak.vercel.app'))) {
+      app.id = 'app-jabslak';
+      app.url = 'https://jabslak.vercel.app/';
+      app.title = 'ប្រព័ន្ធគ្រប់គ្រងស្លាកលេខ និងទីតាំង (Tag & Location Manager)';
+      app.imageUrl = 'images/jobslak_banner.png';
+      app.logoUrl = 'images/jobslak_logo.jpg';
+    }
+  });
+
+  // Deduplicate any repeated jabslak entries
+  const seenJabslak = new Set();
+  appsData = appsData.filter(app => {
+    if (!app) return false;
+    if (app.id === 'app-jabslak' || (app.url && app.url.includes('jabslak.vercel.app'))) {
+      if (seenJabslak.has('jabslak')) return false;
+      seenJabslak.add('jabslak');
+    }
+    return true;
+  });
 
   saveAppsData();
 }
